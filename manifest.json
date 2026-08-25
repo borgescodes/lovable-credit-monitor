@@ -1,0 +1,44 @@
+{
+  "manifest_version": 3,
+  "name": "Credit Monitor",
+  "version": "0.7.2",
+  "description": "Personal workspace credit monitor with passive People synchronization, dynamic themes, and compact usage views.",
+  "permissions": [
+    "storage",
+    "alarms"
+  ],
+  "host_permissions": [
+    "https://lovable.dev/*",
+    "https://*.lovable.dev/*"
+  ],
+  "background": {
+    "service_worker": "src/background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://lovable.dev/*",
+        "https://*.lovable.dev/*"
+      ],
+      "js": [
+        "src/state.js",
+        "src/collector.js",
+        "src/brand.js",
+        "src/icons.js",
+        "src/sync.js",
+        "src/content.js"
+      ],
+      "css": [
+        "src/panel.css"
+      ],
+      "run_at": "document_idle",
+      "world": "ISOLATED"
+    }
+  ],
+  "icons": {
+    "16": "assets/icon-16.png",
+    "32": "assets/icon-32.png",
+    "48": "assets/icon-48.png",
+    "128": "assets/icon-128.png"
+  }
+}

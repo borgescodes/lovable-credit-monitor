@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Credit Monitor is an unofficial, privacy-first Chrome and Edge extension for monitoring Lovable credit usage." />
+  <meta name="theme-color" content="#090d14" />
+  <title>Credit Monitor · Lovable credit usage at a glance</title>
+  <link rel="icon" type="image/png" href="assets/icon-128.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <a class="brand-lockup" href="#top" aria-label="Credit Monitor home">
+      <img src="assets/credit-monitor-default.svg" alt="" width="34" height="34" />
+      <span>Credit Monitor</span>
+    </a>
+    <nav class="header-actions" aria-label="Primary navigation">
+      <a class="text-link" href="#demo">Demo</a>
+      <a class="text-link" href="#install">Install</a>
+      <a class="button button-small button-ghost" href="https://github.com/borgescodes/lovable-credit-monitor">View source</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero section" id="top">
+      <div class="hero-copy">
+        <div class="eyebrow-row">
+          <span class="eyebrow">Unofficial browser extension</span>
+          <span class="version-badge">v0.7.2</span>
+        </div>
+        <h1>Lovable credits,<br /><span>always in view.</span></h1>
+        <p class="hero-lede">
+          A lightweight credit monitor that keeps your personal Lovable usage visible inside the workspace, with passive People synchronization and local-only state.
+        </p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="downloads/lovable-credit-monitor-v0.7.2.zip" download>
+            <span>Download extension</span>
+            <span aria-hidden="true">↓</span>
+          </a>
+          <a class="button button-secondary" href="#demo">Explore the demo</a>
+        </div>
+        <div class="hero-notes" aria-label="Product attributes">
+          <span><i class="status-dot"></i> Chrome & Edge</span>
+          <span>Manifest V3</span>
+          <span>No account required</span>
+        </div>
+      </div>
+
+      <div class="hero-visual" aria-hidden="true">
+        <div class="hero-orbit hero-orbit-one"></div>
+        <div class="hero-orbit hero-orbit-two"></div>
+        <div class="mini-window">
+          <div class="mini-window-top">
+            <span></span><span></span><span></span>
+            <div class="mini-address">lovable.dev/projects/workspace</div>
+          </div>
+          <div class="mini-window-body">
+            <div class="mini-rail">
+              <div class="mini-rail-logo"></div>
+              <div class="mini-rail-line"></div>
+              <div class="mini-rail-line short"></div>
+              <div class="mini-rail-line"></div>
+            </div>
+            <div class="mini-canvas">
+              <div class="mini-card wide"></div>
+              <div class="mini-grid">
+                <div class="mini-card"></div>
+                <div class="mini-card"></div>
+              </div>
+            </div>
+            <div class="floating-product floating-product-preview" data-theme="original">
+              <div class="product-grip"><span></span><span></span><span></span></div>
+              <div class="product-preview-header">
+                <img src="assets/credit-monitor-default.svg" alt="" />
+                <div><strong>Credit Monitor</strong><small>Synced now</small></div>
+                <span class="sync-icon">↻</span>
+              </div>
+              <div class="product-balance">
+                <small>AVAILABLE</small>
+                <strong>36</strong>
+                <span>credits</span>
+              </div>
+              <div class="product-progress"><span style="width:64%"></span></div>
+              <div class="product-meta"><span>64 used</span><span>100 limit</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="proof-strip" aria-label="Key product qualities">
+      <div><strong>Local-first</strong><span>No project-owned backend</span></div>
+      <div><strong>4 views</strong><span>Full to 60px Ring</span></div>
+      <div><strong>4 palettes</strong><span>Including Juparanã</span></div>
+      <div><strong>Read-only flow</strong><span>People as source of truth</span></div>
+    </section>
+
+    <section class="section demo-section" id="demo">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">Interactive product preview</span>
+          <h2>See it inside the workspace.</h2>
+        </div>
+        <p>Switch views and palettes to preview the floating monitor. All values here are fictional and the demo never connects to Lovable.</p>
+      </div>
+
+      <div class="demo-controls" aria-label="Demo controls">
+        <div class="control-group">
+          <span class="control-label">View</span>
+          <div class="segmented" role="group" aria-label="Credit Monitor view">
+            <button type="button" data-view="full" aria-pressed="true">Full</button>
+            <button type="button" data-view="compact" aria-pressed="false">Compact</button>
+            <button type="button" data-view="minimal" aria-pressed="false">Minimal</button>
+            <button type="button" data-view="ring" aria-pressed="false">Ring</button>
+          </div>
+        </div>
+        <div class="control-group">
+          <span class="control-label">Palette</span>
+          <div class="theme-picker" role="group" aria-label="Credit Monitor palette">
+            <button type="button" class="theme-chip original" data-theme="original" aria-pressed="true"><i></i>Original</button>
+            <button type="button" class="theme-chip red" data-theme="red" aria-pressed="false"><i></i>Red</button>
+            <button type="button" class="theme-chip juparana" data-theme="juparana" aria-pressed="false"><i></i>Juparanã</button>
+            <button type="button" class="theme-chip mono" data-theme="mono" aria-pressed="false"><i></i>B&W</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="workspace-shell">
+        <div class="workspace-topbar">
+          <div class="window-dots"><span></span><span></span><span></span></div>
+          <div class="workspace-url"><span class="lock">◆</span> lovable.dev/projects/credit-monitor</div>
+          <div class="workspace-top-actions"><span></span><span></span></div>
+        </div>
+        <div class="workspace-body">
+          <aside class="workspace-sidebar" aria-hidden="true">
+            <div class="workspace-logo">L</div>
+            <div class="sidebar-project"><span></span><strong>Credit Monitor</strong></div>
+            <div class="sidebar-nav active"><span></span>Build</div>
+            <div class="sidebar-nav"><span></span>Preview</div>
+            <div class="sidebar-nav"><span></span>Settings</div>
+            <div class="sidebar-spacer"></div>
+            <div class="sidebar-user"><span>PB</span><div><strong>Pedro</strong><small>Workspace</small></div></div>
+          </aside>
+
+          <div class="workspace-content" aria-hidden="true">
+            <div class="workspace-page-head">
+              <div><span class="skeleton sm"></span><span class="skeleton lg"></span></div>
+              <div class="fake-button"></div>
+            </div>
+            <div class="workspace-grid">
+              <div class="workspace-main-card">
+                <div class="card-toolbar"><span></span><span></span><span></span></div>
+                <div class="mock-ui-block hero-block"><span></span><span></span><div></div></div>
+                <div class="mock-ui-row"><div></div><div></div><div></div></div>
+              </div>
+              <div class="workspace-chat-card">
+                <div class="chat-head"><span></span><strong>Build with Lovable</strong></div>
+                <div class="chat-message"><span class="avatar">AI</span><p>I updated the dashboard layout and kept the interaction compact.</p></div>
+                <div class="chat-message user"><p>Keep the credit monitor visible while I work.</p><span class="avatar">PB</span></div>
+                <div class="chat-input"><span>Ask Lovable...</span><i>↑</i></div>
+              </div>
+            </div>
+          </div>
+
+          <div id="credit-monitor-demo" class="credit-monitor" data-view="full" data-theme="original" aria-label="Simulated Credit Monitor widget">
+            <div class="monitor-full monitor-view">
+              <div class="monitor-grip" aria-hidden="true"><i></i><i></i><i></i></div>
+              <header class="monitor-header">
+                <div class="monitor-title">
+                  <img src="assets/credit-monitor-default.svg" alt="" />
+                  <div><strong>Credit Monitor</strong><span><i></i> Synced now</span></div>
+                </div>
+                <div class="monitor-icons"><span>↻</span><span>◫</span><span>⚙</span></div>
+              </header>
+              <div class="monitor-body">
+                <div class="balance-card">
+                  <div><span class="micro-label">AVAILABLE</span><strong data-value="remaining">36</strong><small>credits</small></div>
+                  <div class="usage-pill"><b data-value="percent">64%</b><span>used</span></div>
+                </div>
+                <div class="progress-track"><span data-progress></span></div>
+                <div class="progress-meta"><span><b data-value="used">64</b> used</span><span><b data-value="limit">100</b> limit</span></div>
+                <div class="reset-card"><span class="reset-icon">◷</span><div><small>MONTHLY RESET</small><strong data-value="reset">6d 18h</strong></div><span class="reset-status">on track</span></div>
+                <div class="palette-row"><span>APPEARANCE</span><div><i></i><i></i><i></i><i></i></div></div>
+              </div>
+            </div>
+
+            <div class="monitor-compact monitor-view">
+              <div class="monitor-grip" aria-hidden="true"><i></i><i></i><i></i></div>
+              <header class="monitor-header compact-head">
+                <div class="monitor-title"><img src="assets/credit-monitor-default.svg" alt="" /><div><strong>Credit Monitor</strong><span><i></i> Synced</span></div></div>
+                <div class="monitor-icons"><span>↻</span><span>◫</span></div>
+              </header>
+              <div class="compact-balance"><div><small>AVAILABLE</small><strong data-value="remaining">36</strong><span>credits</span></div><b data-value="percent">64%</b></div>
+              <div class="progress-track"><span data-progress></span></div>
+              <div class="progress-meta compact-meta"><span><b data-value="used">64</b> used</span><span><b data-value="reset">6d 18h</b></span></div>
+            </div>
+
+            <div class="monitor-minimal monitor-view">
+              <div class="monitor-grip minimal-grip" aria-hidden="true"><i></i><i></i><i></i></div>
+              <div class="minimal-top"><strong data-value="remaining">36</strong><span data-value="percent">64%</span></div>
+              <small><b data-value="used">64</b> / <b data-value="limit">100</b> used</small>
+              <div class="progress-track minimal-progress"><span data-progress></span></div>
+            </div>
+
+            <div class="monitor-ring monitor-view">
+              <div class="ring-shell">
+                <svg viewBox="0 0 80 80" aria-hidden="true">
+                  <circle class="ring-track" cx="40" cy="40" r="34"></circle>
+                  <circle class="ring-progress" data-ring cx="40" cy="40" r="34"></circle>
+                </svg>
+                <strong data-value="remaining">36</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="demo-caption">
+            <span><i class="status-dot"></i> Demo data</span>
+            <span>100 monthly limit · 64 used · 36 remaining</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section feature-section" id="features">
+      <div class="section-heading compact-heading">
+        <div><span class="eyebrow">Designed to stay out of the way</span><h2>Useful signal. Minimal interference.</h2></div>
+      </div>
+      <div class="feature-grid">
+        <article class="feature-card featured">
+          <span class="feature-index">01</span>
+          <div class="feature-icon">↻</div>
+          <h3>Passive People sync</h3>
+          <p>Reads only the row marked <code>(you)</code> from Settings &gt; People and uses the monthly usage and credit limit already shown by Lovable.</p>
+        </article>
+        <article class="feature-card">
+          <span class="feature-index">02</span>
+          <div class="feature-icon">⌂</div>
+          <h3>Local-only state</h3>
+          <p>No project-owned server or account. Usage snapshots, sync state and UI preferences remain in <code>chrome.storage.local</code>.</p>
+        </article>
+        <article class="feature-card">
+          <span class="feature-index">03</span>
+          <div class="feature-icon">◫</div>
+          <h3>Four compact views</h3>
+          <p>Move from a detailed Full panel to Compact, Minimal or a 60px Ring when screen space matters more than detail.</p>
+        </article>
+        <article class="feature-card">
+          <span class="feature-index">04</span>
+          <div class="feature-icon">↔</div>
+          <h3>Edge-aware placement</h3>
+          <p>When the monitor changes size near a viewport edge, it preserves that edge distance and grows back into the workspace.</p>
+        </article>
+        <article class="feature-card">
+          <span class="feature-index">05</span>
+          <div class="feature-icon">◉</div>
+          <h3>Manual Sync</h3>
+          <p>Reuse an existing People tab or create one in the background only when you explicitly need an updated official value.</p>
+        </article>
+        <article class="feature-card">
+          <span class="feature-index">06</span>
+          <div class="feature-icon">∿</div>
+          <h3>Reduced motion aware</h3>
+          <p>View transitions, count-up and progress feedback automatically respect the operating system reduced-motion preference.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section privacy-section" id="privacy">
+      <div class="privacy-copy">
+        <span class="eyebrow">Privacy by construction</span>
+        <h2>No analytics.<br />No extension backend.</h2>
+        <p>Credit Monitor is intentionally small in scope. It reads the Lovable People view, stores the result in your browser and renders the monitor locally.</p>
+        <ul class="privacy-list">
+          <li><span>✓</span>No fetch/XHR interception</li>
+          <li><span>✓</span>No route automation or synthetic clicks</li>
+          <li><span>✓</span>No keyboard-event injection</li>
+          <li><span>✓</span>No project-owned telemetry</li>
+        </ul>
+      </div>
+      <div class="permissions-card">
+        <div class="permissions-head"><span>manifest.json</span><span>MV3</span></div>
+        <pre><code><span class="code-muted">"permissions"</span>: [
+  <span class="code-value">"storage"</span>,
+  <span class="code-value">"alarms"</span>
+],
+<span class="code-muted">"host_permissions"</span>: [
+  <span class="code-value">"https://lovable.dev/*"</span>,
+  <span class="code-value">"https://*.lovable.dev/*"</span>
+]</code></pre>
+        <div class="permissions-note"><span class="shield">◇</span><p><strong>Focused permissions</strong><br />Only what the synchronization flow needs.</p></div>
+      </div>
+    </section>
+
+    <section class="section install-section" id="install">
+      <div class="section-heading">
+        <div><span class="eyebrow">Manual installation</span><h2>Install in under a minute.</h2></div>
+        <a class="button button-primary" href="downloads/lovable-credit-monitor-v0.7.2.zip" download>Download v0.7.2 <span aria-hidden="true">↓</span></a>
+      </div>
+      <div class="install-grid">
+        <article class="install-card"><span>01</span><h3>Download & extract</h3><p>Download the ZIP and extract it to a folder you plan to keep.</p></article>
+        <article class="install-card"><span>02</span><h3>Open extensions</h3><p>Visit <code>chrome://extensions</code> or <code>edge://extensions</code> and enable Developer mode.</p></article>
+        <article class="install-card"><span>03</span><h3>Load unpacked</h3><p>Choose <strong>Load unpacked</strong> and select the folder that contains <code>manifest.json</code>.</p></article>
+      </div>
+      <div class="install-footnote"><span>i</span><p>This build is distributed directly from the project repository and is not a Chrome Web Store or Edge Add-ons listing.</p></div>
+    </section>
+
+    <section class="section final-cta">
+      <div>
+        <img src="assets/credit-monitor-default.svg" alt="" />
+        <span class="eyebrow">Credit Monitor 0.7.2</span>
+        <h2>Keep your build flow.<br />Keep credits in sight.</h2>
+      </div>
+      <div class="final-actions">
+        <a class="button button-primary" href="downloads/lovable-credit-monitor-v0.7.2.zip" download>Download extension <span aria-hidden="true">↓</span></a>
+        <a class="button button-secondary" href="https://github.com/borgescodes/lovable-credit-monitor">Browse the source</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="brand-lockup footer-brand"><img src="assets/credit-monitor-default.svg" alt="" width="30" height="30" /><span>Credit Monitor</span></div>
+    <p>Unofficial independent project. Not affiliated with or endorsed by Lovable.</p>
+    <a href="https://github.com/borgescodes">Built by Pedro Borges</a>
+  </footer>
+
+  <script src="demo.js"></script>
+</body>
+</html>
