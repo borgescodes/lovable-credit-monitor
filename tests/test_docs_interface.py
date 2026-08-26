@@ -74,6 +74,8 @@ class LandingStructureTests(unittest.TestCase):
         self.assertEqual([step.get("data-step") for step in install_steps], ["01", "02", "03"])
         illustrations = {attrs.get("class") for tag, attrs in self.parser.tags if tag == "div" and attrs.get("aria-hidden") == "true"}
         self.assertTrue({"install-illustration download-illustration", "install-illustration browser-illustration", "install-illustration result-illustration"}.issubset(illustrations))
+        self.assertEqual(len(self.tags("div", id="installation-help")), 1)
+        self.assertGreaterEqual(len(self.tags("a", href="#installation-help")), 2)
 
     def test_demo_preserves_all_existing_choices(self):
         views = {attrs.get("data-view") for tag, attrs in self.parser.tags if "data-view" in attrs}
@@ -93,13 +95,26 @@ class LandingStructureTests(unittest.TestCase):
 
     def test_polish_removes_nonsemantic_decoration_and_scopes_reduced_motion(self):
         self.assertEqual(len(self.tags("span", **{"class": "eyebrow"})), 1)
-        feature_markers = self.tags("div", **{"class": "feature-icon", "aria-hidden": "true"})
-        self.assertEqual(len(feature_markers), 6)
+        evidence_icons = self.tags("svg", **{"class": "evidence-icon", "aria-hidden": "true"})
+        self.assertEqual(len(evidence_icons), 3)
+        self.assertEqual(len(self.tags("article", **{"class": "evidence-group"})), 3)
         self.assertNotIn("feature-index", self.html)
+        self.assertNotIn("feature-card", self.html)
+        for glyph in ("↻", "◫", "⚙", "◷", "◇", "→", "↓", "↑", "✓"):
+            self.assertNotIn(glyph, self.html)
         self.assertNotIn(".install-illustration::before", self.css)
         reduced_motion = self.css.split("@media (prefers-reduced-motion: reduce)", 1)[1]
         self.assertNotIn("*, *::before, *::after", reduced_motion)
         self.assertIn(".ring-progress", reduced_motion)
+
+    def test_finish_review_hierarchy_and_mobile_navigation(self):
+        self.assertEqual(len(self.tags("ul", **{"class": "hero-trust-rail"})), 1)
+        self.assertEqual(len(self.tags("li", **{"class": "trust-fact"})), 4)
+        self.assertEqual(len(self.tags("button", **{"data-view": "full", "data-recommended": "true"})), 1)
+        self.assertEqual(len(self.tags("a", **{"class": "text-link nav-install", "href": "#install"})), 1)
+        self.assertEqual(len(self.tags("a", **{"class": "button button-small button-ghost header-source"})), 1)
+        self.assertIn(".nav-install", self.css)
+        self.assertIn(".header-source { display: none; }", self.css)
 
 
 if __name__ == "__main__":
