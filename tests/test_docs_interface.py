@@ -1,3 +1,4 @@
+import re
 import unittest
 from html.parser import HTMLParser
 from pathlib import Path
@@ -88,8 +89,7 @@ class LandingStructureTests(unittest.TestCase):
                 self.assertFalse((attrs.get("src") or "").startswith(("http://", "https://")))
             if tag == "link":
                 self.assertFalse((attrs.get("href") or "").startswith(("http://", "https://")))
-        self.assertNotIn("@import url(\"http", self.css)
-        self.assertNotIn("@import url('http", self.css)
+        self.assertNotRegex(self.css, re.compile(r"@import\s+url\(\s*['\"]?https?://", re.IGNORECASE))
 
 
 if __name__ == "__main__":
