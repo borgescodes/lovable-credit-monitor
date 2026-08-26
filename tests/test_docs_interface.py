@@ -91,6 +91,16 @@ class LandingStructureTests(unittest.TestCase):
                 self.assertFalse((attrs.get("href") or "").startswith(("http://", "https://")))
         self.assertNotRegex(self.css, re.compile(r"@import\s+url\(\s*['\"]?https?://", re.IGNORECASE))
 
+    def test_polish_removes_nonsemantic_decoration_and_scopes_reduced_motion(self):
+        self.assertEqual(len(self.tags("span", **{"class": "eyebrow"})), 1)
+        feature_markers = self.tags("div", **{"class": "feature-icon", "aria-hidden": "true"})
+        self.assertEqual(len(feature_markers), 6)
+        self.assertNotIn("feature-index", self.html)
+        self.assertNotIn(".install-illustration::before", self.css)
+        reduced_motion = self.css.split("@media (prefers-reduced-motion: reduce)", 1)[1]
+        self.assertNotIn("*, *::before, *::after", reduced_motion)
+        self.assertIn(".ring-progress", reduced_motion)
+
 
 if __name__ == "__main__":
     unittest.main()

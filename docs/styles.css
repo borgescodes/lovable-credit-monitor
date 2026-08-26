@@ -89,10 +89,6 @@ code, pre, .version-badge, .hero-notes, .control-label, .demo-caption, .proof-st
 .hero-copy { position: relative; z-index: 2; }
 .eyebrow-row { display: flex; align-items: center; gap: 10px; margin-bottom: 22px; }
 .eyebrow { color: var(--muted); font: 700 11px/1.25 ui-monospace, "SFMono-Regular", Consolas, monospace; letter-spacing: .08em; text-transform: uppercase; }
-.section-heading .eyebrow, .privacy-copy > .eyebrow, .final-cta .eyebrow, .feature-index {
-  position: absolute; width: 1px; height: 1px; overflow: hidden;
-  clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
-}
 .version-badge { padding: 4px 8px; border: 1px solid var(--line-strong); border-radius: 999px; color: var(--cyan); background: rgba(66, 215, 255, .06); font-size: 11px; font-weight: 700; }
 .hero h1, .section-heading h2, .privacy-copy h2, .final-cta h2 { margin: 0; line-height: .99; letter-spacing: -.035em; text-wrap: balance; }
 .hero h1 { max-width: 630px; font-size: clamp(3.5rem, 6.8vw, 5.8rem); font-weight: 760; }
@@ -326,7 +322,7 @@ code, pre, .version-badge, .hero-notes, .control-label, .demo-caption, .proof-st
 .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line-strong); border-left: 1px solid var(--line); }
 .feature-card { position: relative; min-height: 255px; padding: 34px 30px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); background: transparent; }
 .feature-card.featured { background: linear-gradient(140deg, rgba(66, 215, 255, .07), transparent 45%); }
-.feature-icon { position: relative; width: 42px; height: 24px; margin-bottom: 44px; display: block; overflow: hidden; color: transparent; font-size: 0; }
+.feature-icon { position: relative; width: 42px; height: 24px; margin-bottom: 44px; display: block; overflow: hidden; }
 .feature-icon::before { content: ""; width: 8px; height: 8px; margin-top: 7px; display: block; border-radius: 50%; background: var(--cyan); box-shadow: 0 2px 14px rgba(66, 215, 255, .4); }
 .feature-icon::after { content: ""; position: absolute; top: 11px; left: 7px; width: 30px; height: 1px; background: linear-gradient(90deg, var(--cyan), transparent); }
 .feature-card h3 { margin: 0 0 10px; font-size: 18px; letter-spacing: -.02em; }
@@ -365,7 +361,6 @@ code, pre, .version-badge, .hero-notes, .control-label, .demo-caption, .proof-st
   display: flex; align-items: center; justify-content: center; gap: 18px; overflow: hidden;
   border-bottom: 1px solid var(--line); background: var(--panel);
 }
-.install-illustration::before { content: ""; position: absolute; inset: auto 0 0; height: 7px; opacity: .55; background: repeating-linear-gradient(90deg, var(--line-strong) 0 1px, transparent 1px 20px); }
 .archive-chip { padding: 9px 12px; border: 1px solid var(--line-strong); border-radius: 8px; color: var(--cyan); background: var(--page-raised); font-size: 10px; font-weight: 800; }
 .illustration-arrow { color: var(--cyan); }
 .folder-shape { position: relative; width: 116px; height: 78px; padding: 28px 10px 10px; display: grid; place-items: center; border: 1px solid var(--line-strong); border-radius: 7px 11px 11px 11px; color: #9eb0bf; background: var(--panel-raised); font: 8px ui-monospace, "SFMono-Regular", Consolas, monospace; }
@@ -505,8 +500,8 @@ code, pre, .version-badge, .hero-notes, .control-label, .demo-caption, .proof-st
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  *, *::before, *::after {
+  .skip-link, .credit-monitor, .monitor-view, .button, .theme-chip, .segmented button, .ring-progress {
     animation: none !important;
-    transition-duration: 0.001ms !important;
+    transition: none !important;
   }
 }
