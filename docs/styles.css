@@ -57,7 +57,7 @@ code, pre, .version-badge, .hero-notes, .control-label, .demo-caption, .proof-st
   display: flex; align-items: center; justify-content: space-between; gap: 24px;
   border-bottom: 1px solid var(--line);
 }
-.brand-lockup { display: inline-flex; align-items: center; gap: 11px; text-decoration: none; font-weight: 720; letter-spacing: -.02em; }
+.brand-lockup { min-height: var(--touch-target); display: inline-flex; align-items: center; gap: 11px; text-decoration: none; font-weight: 720; letter-spacing: -.02em; }
 .brand-lockup img { width: 34px; height: 34px; object-fit: contain; }
 .header-actions { display: flex; align-items: center; gap: 8px; }
 .text-link {
@@ -437,8 +437,8 @@ code, pre, .version-badge, .hero-notes, .control-label, .demo-caption, .proof-st
   .hero h1 { font-size: clamp(3rem, 14vw, 4.5rem); }
   .hero-lede { font-size: 16px; }
   .hero-visual { min-height: 360px; }
-  .hero-orbit-one { width: 350px; height: 350px; }
-  .hero-orbit-two { width: 270px; height: 270px; }
+  .hero-orbit-one { width: min(350px, 100%); height: auto; aspect-ratio: 1; max-width: 100%; }
+  .hero-orbit-two { width: min(270px, 100%); height: auto; aspect-ratio: 1; max-width: 100%; }
   .mini-window { height: 328px; transform: none; }
   .mini-window-body { grid-template-columns: 72px 1fr; }
   .mini-rail { padding: 16px 10px; }
