@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-26T00:00:00-03:00",
+  "title": "Design System: Credit Monitor",
+  "extensions": {
+    "colorMeta": {
+      "page": { "role": "neutral", "displayName": "Instrument Black", "canonical": "#06090d", "tonalRamp": ["#06090d", "#10161e", "#1c2731", "#31404d", "#4d6070", "#6d7d8c", "#9aabba", "#f4f9fc"] },
+      "page-raised": { "role": "neutral", "displayName": "Raised Black", "canonical": "#091019", "tonalRamp": ["#091019", "#111b26", "#1c2a37", "#354756", "#536676", "#748797", "#a4b4c2", "#edf4f8"] },
+      "panel": { "role": "neutral", "displayName": "Panel Navy", "canonical": "#0b121b", "tonalRamp": ["#0b121b", "#15202d", "#223242", "#3b4e5e", "#5a6d7d", "#7e909f", "#afbdc8", "#f0f5f8"] },
+      "panel-raised": { "role": "neutral", "displayName": "Raised Panel Navy", "canonical": "#101a26", "tonalRamp": ["#101a26", "#1a2a38", "#2a3d4d", "#455a6a", "#627789", "#8497a7", "#b4c1ca", "#f2f6f8"] },
+      "line": { "role": "neutral", "displayName": "Evidence Line", "canonical": "rgba(154, 196, 224, 0.18)", "tonalRamp": ["rgba(154, 196, 224, 0.12)", "rgba(154, 196, 224, 0.18)", "rgba(154, 196, 224, 0.26)", "rgba(154, 196, 224, 0.34)", "rgba(154, 196, 224, 0.45)", "rgba(154, 196, 224, 0.58)", "rgba(154, 196, 224, 0.72)", "rgba(154, 196, 224, 0.86)"] },
+      "line-strong": { "role": "neutral", "displayName": "Strong Evidence Line", "canonical": "rgba(154, 212, 239, 0.34)", "tonalRamp": ["rgba(154, 212, 239, 0.16)", "rgba(154, 212, 239, 0.26)", "rgba(154, 212, 239, 0.34)", "rgba(154, 212, 239, 0.44)", "rgba(154, 212, 239, 0.54)", "rgba(154, 212, 239, 0.66)", "rgba(154, 212, 239, 0.78)", "rgba(154, 212, 239, 0.9)"] },
+      "text": { "role": "neutral", "displayName": "Calibrated White", "canonical": "#f4f9fc", "tonalRamp": ["#1a242d", "#34434e", "#4e606c", "#687b88", "#8496a3", "#a1b1bd", "#c7d2d9", "#f4f9fc"] },
+      "muted": { "role": "neutral", "displayName": "Measured Gray", "canonical": "#9aabba", "tonalRamp": ["#1b2933", "#334550", "#4c606d", "#647987", "#7d929f", "#9aabba", "#becad2", "#e6edf1"] },
+      "faint": { "role": "neutral", "displayName": "Faint Gray", "canonical": "#6d7d8c", "tonalRamp": ["#15212b", "#293845", "#3f505e", "#566977", "#6d7d8c", "#8796a3", "#acb7bf", "#dde3e7"] },
+      "cyan": { "role": "primary", "displayName": "Active Telemetry Cyan", "canonical": "#42d7ff", "tonalRamp": ["#003b4b", "#00556b", "#00718c", "#008fae", "#00aed1", "#42d7ff", "#87e6ff", "#c8f5ff"] },
+      "cyan-deep": { "role": "primary", "displayName": "Deep Telemetry Blue", "canonical": "#2878ff", "tonalRamp": ["#00184d", "#002b78", "#0040a9", "#0056d8", "#2878ff", "#679eff", "#9fc1ff", "#d3e2ff"] },
+      "green": { "role": "secondary", "displayName": "Confirmed State Green", "canonical": "#57d6a1", "tonalRamp": ["#083b2a", "#0d5b3f", "#16805a", "#29aa77", "#57d6a1", "#8ae6bd", "#b9f0d5", "#e0faed"] },
+      "danger": { "role": "secondary", "displayName": "Exception Rose", "canonical": "#ff6577", "tonalRamp": ["#4c0b18", "#751526", "#a32139", "#d63852", "#ff6577", "#ff9aa6", "#ffc2c9", "#ffe4e7"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Instrument Display", "purpose": "Hero promise and maximum-impact statements." },
+      "headline": { "displayName": "Section Headline", "purpose": "Section promises and privacy statements." },
+      "body": { "displayName": "Reading Text", "purpose": "Explanatory copy and technical guidance." },
+      "label": { "displayName": "Measurement Label", "purpose": "Metadata, controls, code, versions, and tabular readouts." }
+    },
+    "shadows": [
+      { "name": "instrument-lift", "value": "0 34px 90px rgba(0, 0, 0, .42)", "purpose": "Main browser-like hero window." },
+      { "name": "workspace-lift", "value": "0 30px 82px rgba(0, 0, 0, .34)", "purpose": "Demo workspace shell." },
+      { "name": "floating-monitor-lift", "value": "0 20px 52px rgba(0, 0, 0, .46)", "purpose": "Movable credit-monitor widget and ring." },
+      { "name": "primary-action-glow", "value": "0 10px 30px rgba(66, 215, 255, .18)", "purpose": "Primary download action at rest." }
+    ],
+    "motion": [
+      { "name": "instrument-ease", "value": "cubic-bezier(.2, .8, .2, 1)", "purpose": "Default hover and state transition easing." },
+      { "name": "state-duration", "value": "180ms", "purpose": "Default interaction transition duration." },
+      { "name": "view-in", "value": "320ms cubic-bezier(.2, .8, .2, 1)", "purpose": "Credit monitor view-change entrance." }
+    ],
+    "breakpoints": [
+      { "name": "tablet", "value": "980px" },
+      { "name": "mobile", "value": "700px" },
+      { "name": "compact", "value": "430px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Primary download or decisive action with a contained telemetry glow.",
+      "html": "<button class=\"ds-btn-primary\">Download extension <span aria-hidden=\"true\">↓</span></button>",
+      "css": ".ds-btn-primary { min-height: 44px; padding: 0 18px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; border: 1px solid transparent; border-radius: 13px; color: #031218; background: #42d7ff; box-shadow: 0 10px 30px rgba(66, 215, 255, .18); font: 700 14px/1 'Segoe UI Variable', 'Segoe UI', ui-sans-serif, system-ui, sans-serif; letter-spacing: -.01em; transition: transform 180ms cubic-bezier(.2, .8, .2, 1), background-color 180ms cubic-bezier(.2, .8, .2, 1), box-shadow 180ms cubic-bezier(.2, .8, .2, 1); cursor: pointer; } .ds-btn-primary:hover { transform: translateY(-2px); background: #7be5ff; box-shadow: 0 14px 38px rgba(66, 215, 255, .25); } .ds-btn-primary:active { transform: translateY(0); } .ds-btn-primary:focus-visible { outline: 2px solid #42d7ff; outline-offset: 3px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Panel-backed alternate action that remains visually quiet beside the primary path.",
+      "html": "<button class=\"ds-btn-secondary\">Explore the demo</button>",
+      "css": ".ds-btn-secondary { min-height: 44px; padding: 0 18px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid rgba(154, 196, 224, .18); border-radius: 13px; color: #f4f9fc; background: #0b121b; font: 700 14px/1 'Segoe UI Variable', 'Segoe UI', ui-sans-serif, system-ui, sans-serif; letter-spacing: -.01em; transition: transform 180ms cubic-bezier(.2, .8, .2, 1), background-color 180ms cubic-bezier(.2, .8, .2, 1), border-color 180ms cubic-bezier(.2, .8, .2, 1); cursor: pointer; } .ds-btn-secondary:hover { transform: translateY(-2px); border-color: rgba(154, 212, 239, .34); background: #101a26; } .ds-btn-secondary:active { transform: translateY(0); } .ds-btn-secondary:focus-visible { outline: 2px solid #42d7ff; outline-offset: 3px; }"
+    },
+    {
+      "name": "Selected Segmented Control",
+      "kind": "chip",
+      "refersTo": "segmented-active",
+      "description": "An active demo configuration with a quiet raised-panel state and evidence-line boundary.",
+      "html": "<button class=\"ds-segmented\" aria-pressed=\"true\">Full <small>Recommended</small></button>",
+      "css": ".ds-segmented { min-height: 44px; padding: 0 12px; display: inline-flex; align-items: center; gap: 7px; border: 1px solid rgba(154, 212, 239, .34); border-radius: 10px; color: #f4f9fc; background: #101a26; box-shadow: 0 5px 18px rgba(0, 0, 0, .2); font: 12px/1 'Segoe UI Variable', 'Segoe UI', ui-sans-serif, system-ui, sans-serif; cursor: pointer; } .ds-segmented small { color: #42d7ff; font: 800 8px/1 ui-monospace, 'SFMono-Regular', Consolas, monospace; letter-spacing: .05em; text-transform: uppercase; } .ds-segmented:hover { background: #0b121b; } .ds-segmented:focus-visible { outline: 2px solid #42d7ff; outline-offset: 3px; }"
+    },
+    {
+      "name": "Credit Monitor Meter",
+      "kind": "card",
+      "refersTo": "monitor-card",
+      "description": "Signature floating usage readout with a grip, tabular balance, active progress, and confirmed status.",
+      "html": "<section class=\"ds-monitor\"><div class=\"ds-grip\"><i></i><i></i><i></i></div><header><strong>Credit Monitor</strong><span><i></i> Synced now</span></header><div class=\"ds-balance\"><small>AVAILABLE</small><b>36</b><em>credits</em></div><div class=\"ds-progress\"><span></span></div><footer><span>64 used</span><span>100 limit</span></footer></section>",
+      "css": ".ds-monitor { width: 284px; padding: 0 10px 10px; border: 1px solid rgba(154, 196, 224, .18); border-radius: 15px; color: #f8fbff; background: #0c121c; box-shadow: 0 20px 52px rgba(0, 0, 0, .46); font-family: 'Segoe UI Variable', 'Segoe UI', ui-sans-serif, system-ui, sans-serif; } .ds-grip { height: 10px; display: flex; align-items: center; justify-content: center; gap: 3px; } .ds-grip i { width: 3px; height: 3px; border-radius: 50%; background: #526579; } .ds-monitor header { padding: 6px 1px 10px; display: flex; flex-direction: column; gap: 3px; } .ds-monitor header strong { font-size: 10px; } .ds-monitor header span { color: #8294a7; font-size: 7px; } .ds-monitor header span i { width: 5px; height: 5px; display: inline-block; border-radius: 50%; background: #57d6a1; } .ds-balance { padding: 13px; display: grid; grid-template-columns: auto 1fr auto; align-items: end; gap: 6px; border: 1px solid rgba(154, 196, 224, .18); border-radius: 11px; background: #121d29; } .ds-balance small { grid-column: 1 / -1; color: #8294a7; font: 700 6px/1 ui-monospace, 'SFMono-Regular', Consolas, monospace; letter-spacing: .1em; } .ds-balance b { font-size: 36px; line-height: 1; letter-spacing: -.035em; font-variant-numeric: tabular-nums; } .ds-balance em { color: #91a3b5; font-size: 8px; font-style: normal; } .ds-progress { height: 5px; margin-top: 10px; overflow: hidden; border-radius: 999px; background: rgba(113, 140, 173, .18); } .ds-progress span { width: 64%; height: 100%; display: block; border-radius: inherit; background: linear-gradient(90deg, #2ed2ff, #5277ff); } .ds-monitor footer { margin-top: 6px; display: flex; justify-content: space-between; color: #8294a7; font: 7px/1 ui-monospace, 'SFMono-Regular', Consolas, monospace; font-variant-numeric: tabular-nums; }"
+    },
+    {
+      "name": "Evidence Rail",
+      "kind": "custom",
+      "refersTo": "evidence-rail",
+      "description": "Ordered proof content separated by fine dividers and a small cyan sequence signal.",
+      "html": "<ol class=\"ds-rail\"><li><b>01</b><strong>People</strong><span>Lovable is the source of truth.</span></li><li><b>02</b><strong>Local storage</strong><span>Usage stays in your browser.</span></li><li><b>03</b><strong>Workspace</strong><span>The monitor keeps it visible.</span></li></ol>",
+      "css": ".ds-rail { width: min(720px, 100%); margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); list-style: none; border-block: 1px solid rgba(154, 212, 239, .34); color: #f4f9fc; font-family: 'Segoe UI Variable', 'Segoe UI', ui-sans-serif, system-ui, sans-serif; } .ds-rail li { min-height: 132px; padding: 25px 24px; display: flex; flex-direction: column; border-right: 1px solid rgba(154, 196, 224, .18); } .ds-rail li:last-child { border-right: 0; } .ds-rail b { margin-bottom: 24px; color: #42d7ff; font: 10px/1 ui-monospace, 'SFMono-Regular', Consolas, monospace; letter-spacing: .12em; } .ds-rail strong { font-size: 15px; } .ds-rail span { margin-top: 5px; color: #9aabba; font-size: 11px; line-height: 1.55; } @media (max-width: 700px) { .ds-rail { grid-template-columns: 1fr; } .ds-rail li { min-height: 112px; border-right: 0; border-bottom: 1px solid rgba(154, 196, 224, .18); } .ds-rail li:last-child { border-bottom: 0; } }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Instrument Panel / Confidence Layer",
+    "overview": "Credit Monitor renders product truth as a calm technical reading: a deep, desktop-first field of near-black surfaces where remaining credits, status, and proof are easier to inspect than to ignore. The world is precise rather than flashy—measurement ticks, concentric rings, tabular numerals, browser-window framing, and evidence rails make the landing page feel like a trustworthy operating surface.\n\nCyan is reserved for active telemetry and the primary path forward; green confirms healthy status. Layered panels, restrained glows, and fine blue-gray rules provide hierarchy without turning the page into a generic neon developer-tool landing page. The overall voice remains concise, technically credible, privacy-first, and explicit about limitations.",
+    "keyCharacteristics": [
+      "Near-black instrument surfaces with fine blue-gray evidence lines.",
+      "Cyan active readings and actions; green only for confirmation or healthy status.",
+      "Variable sans headlines paired with tabular monospace labels and values.",
+      "Browser and workspace simulations treated as structured proof, not decoration.",
+      "Dense desktop evidence rails that stack cleanly into an explicit mobile sequence."
+    ],
+    "rules": [
+      { "name": "The Signal Scarcity Rule", "body": "Cyan identifies activity, selection, focus, progress, and the primary action; green identifies a healthy confirmation. Do not use either as broad decorative fill.", "section": "colors" },
+      { "name": "The Evidence-Line Rule", "body": "Prefer low-contrast rules and tonal shifts to hard card outlines. Strong rules frame only consequential rails, instruments, and permission proof.", "section": "colors" },
+      { "name": "The Readout Rule", "body": "Use monospace for values, labels, URLs, versions, code, and evidence metadata—not for explanatory paragraphs or campaign headlines.", "section": "typography" },
+      { "name": "The Rail-First Rule", "body": "Use a framed or divided rail for ordered proof and comparable facts; reserve broad open space for headings, hero copy, and the final call to action.", "section": "layout" },
+      { "name": "The Contained Glow Rule", "body": "Glows belong to the active control or telemetry marker they explain. Do not wash entire backgrounds or neutral cards in cyan.", "section": "elevation" },
+      { "name": "The Instrument Geometry Rule", "body": "Use rounded rectangles for surfaces and controls, circles for status or measurement, and thin straight rules for sequence and evidence. Avoid ornamental diagonal clipping or exaggerated glass treatment.", "section": "shapes" }
+    ],
+    "dos": [
+      "Do use the near-black surface stack and blue-gray evidence lines to separate information before introducing another card.",
+      "Do reserve cyan for active telemetry, focus, progress, selection, and the primary action; reserve green for a confirmed healthy result.",
+      "Do pair large balanced sans headlines with monospace labels, code, URLs, versions, and tabular values.",
+      "Do present product proof as bounded, ordered evidence rails or browser/workspace instruments.",
+      "Do preserve 44px minimum interactive targets and the observed reduced-motion behavior."
+    ],
+    "donts": [
+      "Don't turn the landing page into a generic neon developer-tool interface or use cyan as an all-purpose background color.",
+      "Don't add broad ambient glows, frosted-glass effects, or decorative gradients that compete with telemetry.",
+      "Don't use green for calls to action or treat status confirmation as a general accent.",
+      "Don't replace the evidence rails with testimonial cards, browser-store badges, or unverified social proof.",
+      "Don't present fictional demo data or HTML/CSS walkthrough illustrations as live product or browser screenshots."
+    ]
+  }
+}
