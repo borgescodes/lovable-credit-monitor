@@ -10,6 +10,14 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <!--
+  THESIS: Credit usage becomes a calm instrument reading, not another generic extension landing page.
+  OWN-WORLD: Near-black instrument surfaces, cyan active telemetry, green confirmation, concentric credit rings, measurement ticks, evidence rails, and tabular numerals.
+  STORY: See remaining credits, understand the People-to-local-storage path, explore the monitor, then install with visual proof and recovery guidance.
+  FIRST VIEWPORT: A concise offer and download action sit left of an oversized monitor-in-workspace instrument; a trust rail closes the viewport.
+  FORM: Instrument Panel / Confidence Layer, user-pinned direction, seed 690409fa.
+  FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
+  -->
   <a class="skip-link" href="#main">Skip to content</a>
 
   <header class="site-header">
@@ -19,6 +27,7 @@
     </a>
     <nav class="header-actions" aria-label="Primary navigation">
       <a class="text-link" href="#demo">Demo</a>
+      <a class="text-link" href="#privacy">Privacy</a>
       <a class="text-link" href="#install">Install</a>
       <a class="button button-small button-ghost" href="https://github.com/borgescodes/lovable-credit-monitor">View source</a>
     </nav>
@@ -44,8 +53,9 @@
         </div>
         <div class="hero-notes" aria-label="Product attributes">
           <span><i class="status-dot"></i> Chrome & Edge</span>
-          <span>Manifest V3</span>
+          <span>Local-only state</span>
           <span>No account required</span>
+          <span>Unofficial distribution</span>
         </div>
       </div>
 
@@ -91,11 +101,16 @@
       </div>
     </section>
 
-    <section class="proof-strip" aria-label="Key product qualities">
-      <div><strong>Local-first</strong><span>No project-owned backend</span></div>
-      <div><strong>4 views</strong><span>Full to 60px Ring</span></div>
-      <div><strong>4 palettes</strong><span>Including Juparanã</span></div>
-      <div><strong>Read-only flow</strong><span>People as source of truth</span></div>
+    <section class="mechanism-section section" id="mechanism" aria-labelledby="mechanism-title">
+      <div class="section-heading compact-heading">
+        <div><h2 id="mechanism-title">A bounded path from People to your workspace.</h2></div>
+        <p>Credit Monitor reads the row marked <code>(you)</code> in Lovable Settings &gt; People, saves the resulting usage snapshot in <code>chrome.storage.local</code>, and renders the monitor in your workspace.</p>
+      </div>
+      <ol class="proof-strip" aria-label="Credit Monitor data path">
+        <li><strong>People</strong><span>Lovable is the source of truth.</span></li>
+        <li><strong>Local storage</strong><span>Usage stays in your browser.</span></li>
+        <li><strong>Workspace</strong><span>The monitor makes it visible while you work.</span></li>
+      </ol>
     </section>
 
     <section class="section demo-section" id="demo">
@@ -224,7 +239,7 @@
       </div>
     </section>
 
-    <section class="section feature-section" id="features">
+    <section class="capabilities-section section" id="features">
       <div class="section-heading compact-heading">
         <div><span class="eyebrow">Designed to stay out of the way</span><h2>Useful signal. Minimal interference.</h2></div>
       </div>
@@ -268,7 +283,7 @@
       </div>
     </section>
 
-    <section class="section privacy-section" id="privacy">
+    <section class="privacy-section section" id="privacy">
       <div class="privacy-copy">
         <span class="eyebrow">Privacy by construction</span>
         <h2>No analytics.<br />No extension backend.</h2>
@@ -294,20 +309,41 @@
       </div>
     </section>
 
-    <section class="section install-section" id="install">
+    <section class="install-section section" id="install">
       <div class="section-heading">
-        <div><span class="eyebrow">Manual installation</span><h2>Install in under a minute.</h2></div>
+        <div><h2>Install in under a minute.</h2><p>Requires Desktop Chrome or Edge. This project is not listed in the Chrome Web Store or Edge Add-ons.</p></div>
         <a class="button button-primary" href="downloads/lovable-credit-monitor-v0.7.2.zip" download>Download v0.7.2 <span aria-hidden="true">↓</span></a>
       </div>
-      <div class="install-grid">
-        <article class="install-card"><span>01</span><h3>Download & extract</h3><p>Download the ZIP and extract it to a folder you plan to keep.</p></article>
-        <article class="install-card"><span>02</span><h3>Open extensions</h3><p>Visit <code>chrome://extensions</code> or <code>edge://extensions</code> and enable Developer mode.</p></article>
-        <article class="install-card"><span>03</span><h3>Load unpacked</h3><p>Choose <strong>Load unpacked</strong> and select the folder that contains <code>manifest.json</code>.</p></article>
+      <div class="install-walkthrough" aria-label="Illustrated manual installation guide">
+        <article class="install-step" data-step="01">
+          <div class="install-illustration download-illustration" aria-hidden="true">
+            <span class="archive-chip">ZIP</span><span class="illustration-arrow">→</span>
+            <span class="folder-shape"><i></i><b>manifest.json</b></span>
+          </div>
+          <h3>Download and extract</h3>
+          <p>Keep the extracted folder—the one containing <code>manifest.json</code>—in a permanent location.</p>
+        </article>
+        <article class="install-step" data-step="02">
+          <div class="install-illustration browser-illustration" aria-hidden="true">
+            <span class="browser-address">chrome://extensions</span>
+            <span class="developer-toggle">Developer mode <i></i></span>
+          </div>
+          <h3>Open Extensions</h3>
+          <p>Open <code>chrome://extensions</code> or <code>edge://extensions</code>, then enable <strong>Developer mode</strong>.</p>
+        </article>
+        <article class="install-step" data-step="03">
+          <div class="install-illustration result-illustration" aria-hidden="true">
+            <span class="load-unpacked-control">Load unpacked</span>
+            <span class="extension-result"><img src="assets/credit-monitor-default.svg" alt="" />Credit Monitor <b>Enabled</b></span>
+          </div>
+          <h3>Load the folder</h3>
+          <p>Choose <strong>Load unpacked</strong> and select the extracted folder that contains <code>manifest.json</code>.</p>
+        </article>
       </div>
-      <div class="install-footnote"><span>i</span><p>This build is distributed directly from the project repository and is not a Chrome Web Store or Edge Add-ons listing.</p></div>
+      <div class="install-footnote"><span>i</span><p>This build is distributed directly from the project repository and is not listed in the Chrome Web Store or Edge Add-ons.</p></div>
     </section>
 
-    <section class="section final-cta">
+    <section class="final-cta section">
       <div>
         <img src="assets/credit-monitor-default.svg" alt="" />
         <span class="eyebrow">Credit Monitor 0.7.2</span>
