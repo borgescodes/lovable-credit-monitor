@@ -12,6 +12,11 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.sync_demo_runtime import DESTINATION_ROOT, RUNTIME_FILES, SOURCE_ROOT, verify_runtime
+
 DOCS = ROOT / "docs"
 DOWNLOAD_NAME = "lovable-credit-monitor-v0.7.2.zip"
 DOWNLOAD = DOCS / "downloads" / DOWNLOAD_NAME
@@ -159,6 +164,13 @@ def verify_demo_is_static() -> None:
     ok("Demo is dependency-free and has no network or extension API calls")
 
 
+def verify_demo_runtime() -> None:
+    failures = verify_runtime(SOURCE_ROOT, DESTINATION_ROOT)
+    if failures:
+        fail("demo runtime drift: " + "; ".join(failures))
+    ok(f"Demo runtime mirrors {len(RUNTIME_FILES)} canonical files byte-for-byte")
+
+
 def verify_no_obvious_secrets() -> None:
     env_files = [path for path in ROOT.rglob("*") if path.is_file() and path.name.startswith(".env")]
     if env_files:
@@ -218,6 +230,7 @@ def main() -> int:
         verify_download_zip,
         verify_demo_references,
         verify_demo_is_static,
+        verify_demo_runtime,
         verify_no_obvious_secrets,
         verify_readme_contract,
     ]
