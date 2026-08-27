@@ -9,6 +9,7 @@ HTML_PATH = ROOT / "docs" / "index.html"
 CSS_PATH = ROOT / "docs" / "styles.css"
 DEMO_HTML_PATH = ROOT / "docs" / "demo" / "index.html"
 DEMO_CSS_PATH = ROOT / "docs" / "demo" / "demo-workspace.css"
+DEMO_JS_PATH = ROOT / "docs" / "demo.js"
 
 
 def css_property(css, selector, property_name):
@@ -66,6 +67,7 @@ class LandingStructureTests(unittest.TestCase):
         cls.parser.feed(cls.html)
         cls.demo_html = DEMO_HTML_PATH.read_text(encoding="utf-8")
         cls.demo_css = DEMO_CSS_PATH.read_text(encoding="utf-8")
+        cls.demo_js = DEMO_JS_PATH.read_text(encoding="utf-8")
         cls.demo_parser = LandingParser()
         cls.demo_parser.feed(cls.demo_html)
 
@@ -111,6 +113,39 @@ class LandingStructureTests(unittest.TestCase):
                 if tag == "a"
             )
         )
+
+    def test_landing_has_presentation_only_hero_and_interactive_main_demo(self):
+        hero = self.tags("iframe", **{"class": "hero-runtime-frame"})
+        demo = self.tags("iframe", **{"class": "interactive-runtime-frame"})
+        self.assertEqual(hero[0][1].get("tabindex"), "-1")
+        self.assertEqual(hero[0][1].get("aria-hidden"), "true")
+        self.assertEqual(hero[0][1].get("src"), "demo/index.html?surface=hero")
+        self.assertNotIn("tabindex", demo[0][1])
+        self.assertEqual(demo[0][1].get("title"), "Interactive Credit Monitor demo")
+
+    def test_landing_does_not_own_product_controls_or_state(self):
+        forbidden = (
+            'class="credit-monitor"', "monitor-full", "monitor-compact",
+            "monitor-minimal", "monitor-ring", "data-view=", "data-theme=",
+            "limit: 100", "used: 64", "remaining: 36", "AVAILABLE",
+        )
+        for value in forbidden:
+            self.assertNotIn(value, self.html)
+
+    def test_supplied_brand_assets_are_used(self):
+        self.assertIn('src="assets/lovable.svg"', self.html)
+        self.assertIn('src="assets/github.svg"', self.html)
+        github = (ROOT / "docs" / "assets" / "github.svg").read_text(encoding="utf-8")
+        self.assertIn('fill="#FFFFFF"', github)
+        self.assertNotIn('fill="#1b1f23"', github)
+
+    def test_landing_script_does_not_own_runtime_controls_or_state(self):
+        forbidden = (
+            "#lcm-panel", ".credit-monitor", "[data-view]", "[data-theme]",
+            "used", "limit", "remaining", "palette", "sync",
+        )
+        for value in forbidden:
+            self.assertNotIn(value, self.demo_js)
 
     def test_installation_walkthrough_is_truthful_and_actionable(self):
         walkthrough = self.tags("div", **{"class": "install-walkthrough"})
@@ -220,12 +255,10 @@ class LandingStructureTests(unittest.TestCase):
     def test_finish_review_hierarchy_and_mobile_navigation(self):
         self.assertEqual(len(self.tags("ul", **{"class": "hero-trust-rail"})), 1)
         self.assertEqual(len(self.tags("li", **{"class": "trust-fact"})), 4)
-        self.assertEqual(len(self.tags("button", **{"data-view": "full", "data-recommended": "true"})), 1)
         self.assertEqual(len(self.tags("a", **{"class": "text-link nav-install", "href": "#install"})), 1)
         self.assertEqual(len(self.tags("a", **{"class": "button button-small button-ghost header-source"})), 1)
         self.assertIn(".nav-install", self.css)
         self.assertIn(".header-source { display: none; }", self.css)
-
 
 if __name__ == "__main__":
     unittest.main()
