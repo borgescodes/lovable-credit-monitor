@@ -26,6 +26,7 @@ html { scroll-behavior: smooth; scrollbar-color: var(--line-strong) var(--page);
 body {
   min-width: 320px;
   margin: 0;
+  overflow-x: clip;
   color: var(--text);
   background: radial-gradient(circle at 76% 8%, rgba(40, 120, 255, .1), transparent 27rem), linear-gradient(180deg, var(--page), #071019 48%, var(--page));
   font-size: 16px;
@@ -80,6 +81,8 @@ code, pre, .version-badge, .control-label, .demo-caption, .proof-strip, .hero-tr
 .button-secondary, .button-ghost { color: var(--text); border-color: var(--line); background: var(--panel); }
 .button-secondary:hover, .button-ghost:hover { border-color: var(--line-strong); background: var(--panel-raised); }
 .button-small { padding-inline: 14px; border-radius: var(--radius-sm); font-size: 13px; }
+.header-source img { filter: none; opacity: 1; }
+.header-source:is(:hover, :focus-visible, :active) img { filter: none; opacity: 1; }
 .button-icon, .ui-icon, .evidence-icon, .illustration-arrow { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .button-icon { width: 18px; height: 18px; }
 .ui-icon { width: 18px; height: 18px; }
@@ -121,6 +124,44 @@ code, pre, .version-badge, .control-label, .demo-caption, .proof-strip, .hero-tr
 .hero-orbit-two { width: 390px; height: 390px; border-color: rgba(40, 120, 255, .15); }
 .hero-orbit::after { content: ""; position: absolute; top: 17%; left: 13%; width: 7px; height: 7px; border-radius: 50%; background: var(--cyan); box-shadow: 0 2px 18px rgba(66, 215, 255, .55); }
 .hero-orbit-two::after { inset: auto 5% 27% auto; background: var(--cyan-deep); }
+
+.demo-frame { overflow: hidden; }
+.hero-runtime-shell,
+.interactive-runtime-shell {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  background: var(--panel);
+  box-shadow: 0 34px 90px rgba(0, 0, 0, .42);
+}
+.hero-runtime-shell { width: 100%; height: 500px; display: block; border-radius: var(--radius-lg); }
+.hero-runtime-frame {
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  border: 0;
+  pointer-events: none;
+  user-select: none;
+  transform-origin: top left;
+}
+.interactive-runtime-shell { width: 100%; height: clamp(620px, 68vw, 760px); border-radius: var(--radius-md); }
+.interactive-runtime-frame { width: 100%; height: 100%; display: block; border: 0; }
+
+.reveal { opacity: 1; transform: none; }
+.reveal.is-pending { opacity: 0; transform: translateY(24px); }
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+  transition: opacity 680ms cubic-bezier(.16, 1, .3, 1), transform 680ms cubic-bezier(.16, 1, .3, 1);
+}
+[data-parallax] {
+  pointer-events: none;
+  will-change: transform;
+  transition: transform 220ms cubic-bezier(.16, 1, .3, 1);
+}
 
 .mini-window, .instrument-plate { position: relative; overflow: hidden; border-radius: var(--radius-lg); background: var(--panel); box-shadow: 0 34px 90px rgba(0, 0, 0, .42); }
 .mini-window { width: min(620px, 100%); height: 408px; border: 1px solid var(--line-strong); transform: perspective(1200px) rotateY(-4deg) rotateX(1.5deg); }
@@ -394,7 +435,7 @@ code, pre, .version-badge, .control-label, .demo-caption, .proof-strip, .hero-tr
 .install-footnote > span { width: 22px; height: 22px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 50%; color: #a4b5c4; background: var(--panel-raised); font-weight: 800; }
 .install-footnote p { margin: 0; }
 .install-footnote strong { color: #b9c7d2; }
-.install-footnote a { color: var(--text); font-weight: 700; }
+.install-footnote a { min-height: var(--touch-target); display: inline-flex; align-items: center; color: var(--text); font-weight: 700; }
 
 .final-cta { position: relative; min-height: 390px; margin-bottom: 90px; padding: 52px; display: flex; align-items: end; justify-content: space-between; gap: 40px; overflow: hidden; border: 1px solid var(--line-strong); border-radius: var(--radius-lg); background: var(--panel); box-shadow: 0 28px 80px rgba(0, 0, 0, .28); }
 .final-cta::before { content: ""; position: absolute; width: 390px; height: 390px; top: -210px; right: 15%; border: 1px solid rgba(66, 215, 255, .14); border-radius: 50%; box-shadow: inset 0 0 0 62px rgba(40, 120, 255, .025), inset 0 0 0 124px rgba(66, 215, 255, .02); }
@@ -422,6 +463,7 @@ code, pre, .version-badge, .control-label, .demo-caption, .proof-strip, .hero-tr
   .hero { min-height: 0; padding-top: 70px; grid-template-columns: 1fr; }
   .hero-copy { max-width: 760px; }
   .hero-visual { min-height: 480px; }
+  .hero-runtime-shell { height: 520px; }
   .section-heading { align-items: flex-start; flex-direction: column; gap: 22px; }
   .section-heading > p { max-width: 70ch; }
   .demo-controls { align-items: flex-start; flex-direction: column; }
@@ -444,7 +486,7 @@ code, pre, .version-badge, .control-label, .demo-caption, .proof-strip, .hero-tr
   .final-actions { width: 100%; max-width: 340px; }
 }
 
-@media (max-width: 700px) {
+@media (max-width: 768px) {
   .site-header, .section, .site-footer { width: min(100% - 28px, var(--max)); }
   .site-header { min-height: 68px; }
   .header-actions { gap: 4px; }
@@ -455,6 +497,9 @@ code, pre, .version-badge, .control-label, .demo-caption, .proof-strip, .hero-tr
   .hero h1 { font-size: clamp(3rem, 14vw, 4.5rem); }
   .hero-lede { font-size: 16px; }
   .hero-visual { min-height: 360px; }
+  .hero-runtime-shell { height: 410px; }
+  .hero-runtime-frame { width: 125%; height: 125%; transform: scale(.8); }
+  .interactive-runtime-shell { height: 720px; }
   .hero-orbit-one { width: min(350px, 100%); height: auto; aspect-ratio: 1; max-width: 100%; }
   .hero-orbit-two { width: min(270px, 100%); height: auto; aspect-ratio: 1; max-width: 100%; }
   .mini-window { height: 328px; transform: none; }
@@ -512,6 +557,8 @@ code, pre, .version-badge, .control-label, .demo-caption, .proof-strip, .hero-tr
   .trust-mark { width: 18px; height: 18px; }
   .trust-mark::before { width: 5px; height: 5px; }
   .hero-visual { min-height: 330px; }
+  .hero-runtime-shell { height: 390px; }
+  .hero-runtime-frame { width: 150%; height: 150%; transform: scale(.6667); }
   .mini-window { height: 296px; }
   .mini-window-body { grid-template-columns: 58px 1fr; }
   .mini-canvas { padding: 12px; }
@@ -526,8 +573,19 @@ code, pre, .version-badge, .control-label, .demo-caption, .proof-strip, .hero-tr
   .install-illustration { padding-inline: 14px; }
 }
 
+@media (max-width: 375px) {
+  .site-header, .section, .site-footer { width: min(100% - 24px, var(--max)); }
+  .hero-runtime-shell { height: 372px; }
+  .hero-runtime-frame { width: 166.667%; height: 166.667%; transform: scale(.6); }
+  .section-heading h2, .privacy-copy h2, .final-cta h2 { font-size: 2.35rem; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
+  .instrument-orbit,
+  .telemetry-pulse { animation: none; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  [data-parallax] { transform: none !important; }
   .skip-link, .credit-monitor, .monitor-view, .button, .theme-chip, .segmented button, .ring-progress, .palette-control {
     animation: none !important;
     transition: none !important;
