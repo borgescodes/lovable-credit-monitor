@@ -7,7 +7,7 @@
   --workspace-line-strong: rgba(170, 206, 232, 0.25);
   --workspace-text: #eef4f8;
   --workspace-muted: #9baab7;
-  --workspace-faint: #6f7c89;
+  --workspace-faint: #788897;
   --workspace-cyan: #42d7ff;
   --workspace-green: #57d6a1;
   min-width: 320px;
@@ -512,7 +512,7 @@
 
 .demo-workspace .preview-metrics span {
   overflow: hidden;
-  color: #60737f;
+  color: #526673;
   font-size: 8px;
   font-weight: 660;
   letter-spacing: 0.06em;

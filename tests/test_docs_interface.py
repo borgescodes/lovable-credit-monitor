@@ -8,6 +8,40 @@ ROOT = Path(__file__).resolve().parents[1]
 HTML_PATH = ROOT / "docs" / "index.html"
 CSS_PATH = ROOT / "docs" / "styles.css"
 DEMO_HTML_PATH = ROOT / "docs" / "demo" / "index.html"
+DEMO_CSS_PATH = ROOT / "docs" / "demo" / "demo-workspace.css"
+
+
+def css_property(css, selector, property_name):
+    rule = re.search(rf"{re.escape(selector)}\s*\{{([^}}]+)\}}", css)
+    if not rule:
+        raise AssertionError(f"Missing CSS rule: {selector}")
+    declaration = re.search(rf"(?:^|;)\s*{re.escape(property_name)}\s*:\s*([^;]+)", rule.group(1))
+    if not declaration:
+        raise AssertionError(f"Missing {property_name} in CSS rule: {selector}")
+    return declaration.group(1).strip()
+
+
+def resolve_css_hex(css, value):
+    variable = re.fullmatch(r"var\((--[a-z0-9-]+)\)", value)
+    if variable:
+        value = css_property(css, ".demo-workspace", variable.group(1))
+    if not re.fullmatch(r"#[0-9a-fA-F]{6}", value):
+        raise AssertionError(f"Expected an opaque six-digit CSS color, got: {value}")
+    return value
+
+
+def relative_luminance(hex_color):
+    channels = [int(hex_color[index:index + 2], 16) / 255 for index in (1, 3, 5)]
+    linear = [
+        channel / 12.92 if channel <= 0.04045 else ((channel + 0.055) / 1.055) ** 2.4
+        for channel in channels
+    ]
+    return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2]
+
+
+def contrast_ratio(foreground, background):
+    lighter, darker = sorted((relative_luminance(foreground), relative_luminance(background)), reverse=True)
+    return (lighter + 0.05) / (darker + 0.05)
 
 
 class LandingParser(HTMLParser):
@@ -31,6 +65,7 @@ class LandingStructureTests(unittest.TestCase):
         cls.parser = LandingParser()
         cls.parser.feed(cls.html)
         cls.demo_html = DEMO_HTML_PATH.read_text(encoding="utf-8")
+        cls.demo_css = DEMO_CSS_PATH.read_text(encoding="utf-8")
         cls.demo_parser = LandingParser()
         cls.demo_parser.feed(cls.demo_html)
 
@@ -100,6 +135,48 @@ class LandingStructureTests(unittest.TestCase):
             "runtime/content.js",
         ])
 
+    def test_demo_loads_workspace_styles_before_runtime_and_defers_every_script(self):
+        stylesheets = [
+            attrs.get("href")
+            for tag, attrs in self.demo_parser.tags
+            if tag == "link" and attrs.get("rel") == "stylesheet"
+        ]
+        self.assertEqual(stylesheets, ["demo-workspace.css", "runtime/panel.css"])
+        scripts = [attrs for tag, attrs in self.demo_parser.tags if tag == "script"]
+        self.assertTrue(scripts)
+        self.assertTrue(all("defer" in attrs for attrs in scripts))
+
+    def test_demo_workspace_css_never_targets_runtime_or_escapes_its_scope(self):
+        self.assertNotIn("#lcm-panel", self.demo_css)
+        self.assertNotIn(".lcm-", self.demo_css)
+        rule_headers = re.findall(r"([^{}]+)\{", self.demo_css)
+        selectors = [
+            selector.strip()
+            for header in rule_headers
+            if not header.strip().startswith("@")
+            for selector in header.split(",")
+        ]
+        self.assertTrue(selectors)
+        self.assertTrue(all(selector.startswith(".demo-workspace") for selector in selectors), selectors)
+
+    def test_demo_workspace_small_text_meets_wcag_aa_contrast(self):
+        contrast_pairs = (
+            (".demo-workspace .preview-metrics span", ".demo-workspace .preview-document"),
+            (".demo-workspace .canvas-toolbar p", ".demo-workspace .canvas-toolbar"),
+            (".demo-workspace .canvas-status", ".demo-workspace .canvas-status"),
+        )
+        for foreground_selector, background_selector in contrast_pairs:
+            with self.subTest(foreground=foreground_selector, background=background_selector):
+                foreground = resolve_css_hex(
+                    self.demo_css,
+                    css_property(self.demo_css, foreground_selector, "color"),
+                )
+                background = resolve_css_hex(
+                    self.demo_css,
+                    css_property(self.demo_css, background_selector, "background"),
+                )
+                self.assertGreaterEqual(contrast_ratio(foreground, background), 4.5)
+
     def test_demo_workspace_labels_truth_and_uses_lovable_brand(self):
         self.assertIn("Real interface · simulated usage data", self.demo_html)
         self.assertEqual(len(self.demo_tags("img", src="../assets/lovable.svg")), 1)
@@ -110,6 +187,13 @@ class LandingStructureTests(unittest.TestCase):
         self.assertNotIn("monitor-full", classes)
         self.assertNotIn("lcm-view", classes)
         self.assertNotIn('id="lcm-panel"', self.demo_html)
+
+    def test_demo_fictional_connection_indicator_is_decorative(self):
+        self.assertEqual(
+            len(self.demo_tags("span", **{"class": "conversation-status", "aria-hidden": "true"})),
+            1,
+        )
+        self.assertEqual(len(self.demo_tags("span", **{"class": "conversation-status", "aria-label": "Connected"})), 0)
 
     def test_static_site_does_not_gain_remote_dependencies(self):
         for tag, attrs in self.parser.tags:
