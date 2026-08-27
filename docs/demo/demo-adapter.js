@@ -103,7 +103,7 @@
                   status: 'live',
                   lastSuccessAt: syncNow.toISOString(),
                   requestedAt: null,
-                  reason: 'demo',
+                  reason: 'manual',
                 },
               }).then(() => resolve({ ok: true }));
             }, 800);

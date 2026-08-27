@@ -72,6 +72,7 @@ test('manual sync writes through storage and notifies real listeners', async () 
   assert.equal(observed.at(-1).area, 'local');
   assert.deepEqual(observed.at(-1).changes.lovableCreditMonitorUsageV6.oldValue.used, 1267);
   assert.deepEqual(observed.at(-1).changes.lovableCreditMonitorUsageV6.newValue.used, 1274);
+  assert.equal(observed.at(-1).changes.lovableCreditMonitorSyncV6.newValue.status, 'live');
 });
 
 test('storage get supports null, string, arrays, and object defaults', async () => {
@@ -97,6 +98,24 @@ test('storage set persists UI preferences and reports Chrome-shaped changes', as
   assert.ok(Object.hasOwn(observed[0].changes.lovableCreditMonitorUiV6, 'oldValue'));
   assert.equal(observed[0].changes.lovableCreditMonitorUiV6.oldValue, undefined);
   assert.deepEqual(plain(observed[0].changes.lovableCreditMonitorUiV6.newValue), preference);
+});
+
+test('storage get returns defensive clones', async () => {
+  const context = loadAdapter();
+  const firstRead = await context.chrome.storage.local.get('lovableCreditMonitorUsageV6');
+  firstRead.lovableCreditMonitorUsageV6.used = 0;
+  const secondRead = await context.chrome.storage.local.get('lovableCreditMonitorUsageV6');
+  assert.equal(secondRead.lovableCreditMonitorUsageV6.used, 1267);
+});
+
+test('storage change payloads do not expose stored values', async () => {
+  const context = loadAdapter();
+  context.chrome.storage.onChanged.addListener((changes) => {
+    changes.lovableCreditMonitorUiV6.newValue.mode = 'minimal';
+  });
+  await context.chrome.storage.local.set({ lovableCreditMonitorUiV6: { mode: 'compact' } });
+  const stored = await context.chrome.storage.local.get('lovableCreditMonitorUiV6');
+  assert.equal(stored.lovableCreditMonitorUiV6.mode, 'compact');
 });
 
 test('registration and activity messages are harmless while unknown messages fail closed', async () => {
