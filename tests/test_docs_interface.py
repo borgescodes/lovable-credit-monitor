@@ -7,6 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 HTML_PATH = ROOT / "docs" / "index.html"
 CSS_PATH = ROOT / "docs" / "styles.css"
+DEMO_HTML_PATH = ROOT / "docs" / "demo" / "index.html"
 
 
 class LandingParser(HTMLParser):
@@ -29,11 +30,21 @@ class LandingStructureTests(unittest.TestCase):
         cls.css = CSS_PATH.read_text(encoding="utf-8")
         cls.parser = LandingParser()
         cls.parser.feed(cls.html)
+        cls.demo_html = DEMO_HTML_PATH.read_text(encoding="utf-8")
+        cls.demo_parser = LandingParser()
+        cls.demo_parser.feed(cls.demo_html)
 
     def tags(self, tag, **attrs):
         return [
             found
             for found in self.parser.tags
+            if found[0] == tag and all(key in found[1] and found[1][key] == value for key, value in attrs.items())
+        ]
+
+    def demo_tags(self, tag, **attrs):
+        return [
+            found
+            for found in self.demo_parser.tags
             if found[0] == tag and all(key in found[1] and found[1][key] == value for key, value in attrs.items())
         ]
 
@@ -77,13 +88,28 @@ class LandingStructureTests(unittest.TestCase):
         self.assertEqual(len(self.tags("div", id="installation-help")), 1)
         self.assertGreaterEqual(len(self.tags("a", href="#installation-help")), 2)
 
-    def test_demo_preserves_all_existing_choices(self):
-        views = {attrs.get("data-view") for tag, attrs in self.parser.tags if "data-view" in attrs}
-        themes = {attrs.get("data-theme") for tag, attrs in self.parser.tags if "data-theme" in attrs}
-        self.assertTrue({"full", "compact", "minimal", "ring"}.issubset(views))
-        self.assertTrue({"original", "red", "juparana", "mono"}.issubset(themes))
-        self.assertGreaterEqual(len(self.tags("span", **{"data-progress": None})), 1)
-        self.assertGreaterEqual(len(self.tags("circle", **{"data-ring": None})), 1)
+    def test_demo_loads_real_runtime_after_adapter(self):
+        sources = [attrs.get("src") for tag, attrs in self.demo_parser.tags if tag == "script"]
+        self.assertEqual(sources, [
+            "runtime/state.js",
+            "runtime/collector.js",
+            "runtime/brand.js",
+            "runtime/icons.js",
+            "runtime/sync.js",
+            "demo-adapter.js",
+            "runtime/content.js",
+        ])
+
+    def test_demo_workspace_labels_truth_and_uses_lovable_brand(self):
+        self.assertIn("Real interface · simulated usage data", self.demo_html)
+        self.assertEqual(len(self.demo_tags("img", src="../assets/lovable.svg")), 1)
+
+    def test_demo_document_never_reimplements_monitor_markup(self):
+        classes = " ".join(attrs.get("class", "") for _, attrs in self.demo_parser.tags)
+        self.assertNotIn("credit-monitor", classes)
+        self.assertNotIn("monitor-full", classes)
+        self.assertNotIn("lcm-view", classes)
+        self.assertNotIn('id="lcm-panel"', self.demo_html)
 
     def test_static_site_does_not_gain_remote_dependencies(self):
         for tag, attrs in self.parser.tags:

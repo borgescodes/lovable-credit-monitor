@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#080b10" />
+  <title>Credit Monitor · Runtime demo</title>
+  <link rel="stylesheet" href="demo-workspace.css" />
+  <link rel="stylesheet" href="runtime/panel.css" />
+  <script src="runtime/state.js" defer></script>
+  <script src="runtime/collector.js" defer></script>
+  <script src="runtime/brand.js" defer></script>
+  <script src="runtime/icons.js" defer></script>
+  <script src="runtime/sync.js" defer></script>
+  <script src="demo-adapter.js" defer></script>
+  <script src="runtime/content.js" defer></script>
+</head>
+<body class="demo-workspace">
+  <!--
+  THESIS: The real Credit Monitor operates inside a restrained fictional workspace, never a hand-built imitation of the product.
+  OWN-WORLD: Near-black work surfaces, quiet blue-gray rails, tabular build evidence, and one supplied Lovable mark frame the runtime without styling it.
+  STORY: A builder sees credible project context, recognizes the demo boundary, and can inspect or operate the real monitor with simulated values.
+  FIRST VIEWPORT: A compact project bar sits above a narrow navigation rail, active build canvas, conversation stream, and persistent truth label; the runtime owns the floating foreground.
+  FORM: Instrument Panel / Confidence Layer, inherited code-led direction, seed 690409fa.
+  FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
+  -->
+  <header class="workspace-topbar">
+    <div class="window-controls" aria-hidden="true">
+      <span></span><span></span><span></span>
+    </div>
+    <p class="project-address">lovable.dev/projects/credit-monitor-studio</p>
+    <p class="build-state"><span aria-hidden="true"></span>Preview ready</p>
+  </header>
+
+  <main class="workspace-shell">
+    <aside class="project-sidebar" aria-label="Fictional project navigation">
+      <div class="workspace-brand">
+        <img src="../assets/lovable.svg" alt="" width="30" height="30" />
+        <div>
+          <strong>Credit monitor</strong>
+          <span>Personal project</span>
+        </div>
+      </div>
+
+      <nav aria-label="Workspace sections">
+        <ul class="project-nav">
+          <li class="is-active"><span class="nav-mark nav-mark-build" aria-hidden="true"></span>Build</li>
+          <li><span class="nav-mark nav-mark-preview" aria-hidden="true"></span>Preview</li>
+          <li><span class="nav-mark nav-mark-code" aria-hidden="true"></span>Code</li>
+        </ul>
+      </nav>
+
+      <div class="project-files" aria-label="Project files">
+        <p>Project files</p>
+        <ul>
+          <li><span aria-hidden="true"></span>src</li>
+          <li class="file-nested">Dashboard.tsx</li>
+          <li class="file-nested is-current">UsagePanel.tsx</li>
+          <li><span aria-hidden="true"></span>public</li>
+        </ul>
+      </div>
+
+      <p class="workspace-user"><span aria-hidden="true">PB</span>Pedro's workspace</p>
+    </aside>
+
+    <section class="build-canvas" aria-labelledby="canvas-title">
+      <header class="canvas-toolbar">
+        <div>
+          <p>Editing</p>
+          <h1 id="canvas-title">Credit dashboard</h1>
+        </div>
+        <p class="viewport-reading"><span aria-hidden="true"></span>Desktop · 1440</p>
+      </header>
+
+      <div class="canvas-stage">
+        <article class="preview-document" aria-label="Fictional credit dashboard preview">
+          <header class="preview-header">
+            <div>
+              <span class="preview-logo" aria-hidden="true"></span>
+              <strong>Northstar</strong>
+            </div>
+            <span class="preview-avatar" aria-hidden="true">PB</span>
+          </header>
+          <div class="preview-copy">
+            <p>August workspace</p>
+            <h2>Build with a clear view of every resource.</h2>
+            <span>Project activity and delivery signals, arranged for focus.</span>
+          </div>
+          <div class="preview-metrics" aria-label="Illustrative project metrics">
+            <div><span>Active tasks</span><strong>08</strong></div>
+            <div><span>Review queue</span><strong>03</strong></div>
+            <div><span>Build health</span><strong>Good</strong></div>
+          </div>
+          <div class="preview-activity" aria-hidden="true">
+            <span style="height: 34%"></span>
+            <span style="height: 48%"></span>
+            <span style="height: 42%"></span>
+            <span style="height: 68%"></span>
+            <span style="height: 57%"></span>
+            <span style="height: 82%"></span>
+            <span style="height: 72%"></span>
+            <span style="height: 92%"></span>
+          </div>
+        </article>
+      </div>
+
+      <footer class="canvas-status">
+        <span><i aria-hidden="true"></i>Live preview</span>
+        <span>Last build 12s ago</span>
+      </footer>
+    </section>
+
+    <aside class="conversation-panel" aria-labelledby="conversation-title">
+      <header>
+        <div>
+          <p>Conversation</p>
+          <h2 id="conversation-title">Build with Lovable</h2>
+        </div>
+        <span class="conversation-status" aria-label="Connected"></span>
+      </header>
+
+      <div class="conversation-stream">
+        <article class="message message-assistant">
+          <span class="message-author" aria-hidden="true">L</span>
+          <div>
+            <p>I tightened the dashboard rhythm and kept the project signals readable at a glance.</p>
+            <time datetime="2026-08-27T09:42:00-03:00">09:42</time>
+          </div>
+        </article>
+        <article class="message message-user">
+          <div>
+            <p>Keep the credit monitor visible while I work.</p>
+            <time datetime="2026-08-27T09:43:00-03:00">09:43</time>
+          </div>
+          <span class="message-author" aria-hidden="true">PB</span>
+        </article>
+        <article class="message message-assistant">
+          <span class="message-author" aria-hidden="true">L</span>
+          <div>
+            <p>Done. The workspace stays clear while the monitor remains available above it.</p>
+            <time datetime="2026-08-27T09:43:30-03:00">09:43</time>
+          </div>
+        </article>
+      </div>
+
+      <div class="prompt-field" aria-label="Fictional prompt field">
+        <span>Ask Lovable to refine the page…</span>
+        <i aria-hidden="true"></i>
+      </div>
+    </aside>
+  </main>
+
+  <p class="simulation-label"><span aria-hidden="true"></span>Real interface · simulated usage data</p>
+</body>
+</html>
