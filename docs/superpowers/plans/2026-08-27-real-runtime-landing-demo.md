@@ -45,18 +45,20 @@
 - Produces: `RUNTIME_FILES: tuple[str, ...]`, `copy_runtime(source_root: Path, destination_root: Path) -> None`, `verify_runtime(source_root: Path, destination_root: Path) -> list[str]`, and CLI `python scripts/sync_demo_runtime.py [--check]`.
 - Consumes: canonical bytes from `src/<name>`.
 - Produces for later tasks: deployable runtime URLs under `demo/runtime/` and `verify_demo_runtime()` in repository verification.
+- Produces for final verification: the exact pre-implementation `BASELINE_COMMIT` recorded in the SDD ledger and the raw SHA-256 baseline for every protected file.
 
 - [ ] **Step 1: Capture the working-tree boundary**
 
 Run:
 
 ```powershell
+git rev-parse HEAD
 git status --short
 git diff -- docs/demo.js tests/test_docs_interface.py
 Get-FileHash manifest.json, src\*.js, src\panel.css -Algorithm SHA256
 ```
 
-Record the source hashes in the task notes and do not stage unrelated `.impeccable`, `.agents`, `.codex`, or `.opencode` content.
+Record the `git rev-parse HEAD` result in the SDD ledger as `Baseline commit: <sha>`, record every protected-file raw SHA-256 in the Task 1 report, and do not stage unrelated `.impeccable`, `.agents`, `.codex`, or `.opencode` content. Task 7 must compare protected paths against this exact commit even if intermediate task commits touched them.
 
 - [ ] **Step 2: Write failing raw-byte synchronization tests**
 
@@ -485,7 +487,12 @@ Use filled Boxicon paths for every landing interface icon and the supplied brand
 
 - [ ] **Step 5: Replace fake-demo JavaScript without losing unrelated behavior**
 
-Do not edit `docs/demo.js` yet beyond removing fake state and fake interaction functions; Task 5 adds landing-only behavior test-first. Delete `tests/demo_interaction.test.mjs` only after `tests/test_docs_interface.py` passes the new ownership tests.
+Do not edit `docs/demo.js` yet beyond removing fake state and fake interaction functions; Task 5 adds landing-only behavior test-first. Delete `tests/demo_interaction.test.mjs` only after `tests/test_docs_interface.py` passes the new ownership tests. The file is currently untracked, so first add an intent-to-add index entry and then use `git rm` to delete the working-tree file rather than leaving it behind:
+
+```powershell
+git add --intent-to-add tests/demo_interaction.test.mjs
+git rm -f tests/demo_interaction.test.mjs
+```
 
 - [ ] **Step 6: Turn markup/ownership tests green**
 
@@ -498,7 +505,6 @@ python scripts/verify_repository.py
 
 ```powershell
 git add docs/index.html docs/assets/github.svg docs/demo.js tests/test_docs_interface.py
-git rm --cached --ignore-unmatch tests/demo_interaction.test.mjs
 git commit -m "feat: embed real runtime in Credit Monitor landing"
 ```
 
@@ -713,11 +719,15 @@ python -m unittest discover -s tests -v
 python scripts/sync_demo_runtime.py --check
 python scripts/verify_repository.py
 git diff --check
-git diff --exit-code -- manifest.json src docs/downloads/lovable-credit-monitor-v0.7.2.zip
+$ledgerPath = '.superpowers/sdd/2026-08-27-real-runtime-landing-demo/progress.md'
+$baselineMatch = Select-String -Path $ledgerPath -Pattern '^Baseline commit: ([0-9a-f]{40})$'
+$baselineCommit = $baselineMatch.Matches[0].Groups[1].Value
+if (-not $baselineCommit) { throw 'Task 1 baseline commit is missing from the SDD ledger' }
+git diff --exit-code $baselineCommit -- manifest.json src docs/downloads/lovable-credit-monitor-v0.7.2.zip
 git status --short
 ```
 
-Read every exit code and full output. Compare final canonical source hashes to Task 1's baseline. Report the exact test counts, repository verifier result, reviewer disposition, browser matrix, protected-file status, and any unrelated pre-existing working-tree changes still present.
+Do not compute the baseline from `HEAD~N`. Read every exit code and full output. Compare final canonical source hashes to Task 1's raw-byte baseline as a separate check. Report the exact test counts, repository verifier result, reviewer disposition, browser matrix, protected-file status, and any unrelated pre-existing working-tree changes still present.
 
 - [ ] **Step 8: Commit the verified final batch if corrections were needed**
 
