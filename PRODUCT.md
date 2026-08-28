@@ -32,7 +32,7 @@ The extension treats Lovable's People screen as the authoritative source, reads 
 ## Capabilities and Constraints
 
 - The landing page is static HTML, CSS, and JavaScript under `docs/` and is published separately from the extension runtime.
-- The interactive demo uses fictional values and never connects to Lovable or browser-extension APIs.
+- The public demo runs a byte-for-byte mirror of the real Credit Monitor interface/runtime inside a fictional Lovable workspace. A local adapter supplies fictional usage through simulated, in-memory Chrome storage; the demo never connects to Lovable, a project backend, the network, or a visitor's browser-extension APIs.
 - Runtime source, synchronization rules, state semantics, permissions, and extension behavior must remain unchanged unless a presentation defect makes a minimal change necessary.
 - The extension is unofficial and independent, with no affiliation or endorsement claim from Lovable.
 - The public copy remains entirely in English.
@@ -41,15 +41,15 @@ The extension treats Lovable's People screen as the authoritative source, reads 
 ## Brand Commitments
 
 - Product name: Credit Monitor.
-- Existing logo assets under `assets/` and `docs/assets/` remain recognizable and unchanged.
+- Existing extension logo assets under `assets/` remain recognizable and unchanged; the landing uses the supplied Lovable mark and the supplied GitHub geometry with its visible path filled pure white.
 - Voice: concise, technically credible, calm, privacy-first, and explicit about limitations.
 - Approved landing-page direction: Instrument Panel / Confidence Layer.
 - The visual identity should feel specific to credit telemetry and trustworthy manual installation, not like a generic neon developer-tool landing page.
 
 ## Evidence on Hand
 
-- Interactive fictional product demo in `docs/index.html` and `docs/demo.js`.
-- Extension UI implementation in `src/panel.css` and related runtime files.
+- Real interactive product demo in `docs/demo/`, embedded twice by `docs/index.html`: once as an inert hero presentation and once as the operable main demo.
+- Generated runtime mirror in `docs/demo/runtime/`, verified byte-for-byte against `src/panel.css` and the related canonical runtime files.
 - Verified permission and synchronization descriptions in `README.md`, `EXTENSION_README.md`, and `manifest.json`.
 - Existing downloadable release at `docs/downloads/lovable-credit-monitor-v0.7.2.zip`.
 - Existing logo and icon assets in `docs/assets/`.

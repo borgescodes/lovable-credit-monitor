@@ -18,12 +18,12 @@ related_targets: ["docs/styles.css","docs/demo.js"]
 - Audience: Lovable builders evaluating an unofficial Chrome/Edge extension, including first-time extension installers.
 - Job: understand the credit-monitoring mechanism, verify the privacy model, explore the four display modes, and install the unpacked extension confidently on desktop.
 - Primary action: download v0.7.2 after seeing requirements and installation proof.
-- Proof: interactive fictional demo, truthful People-to-local-storage data flow, focused manifest permissions, source link, and HTML/CSS installation walkthrough.
+- Proof: the real mirrored Credit Monitor interface/runtime operating on explicitly simulated in-memory usage, truthful People-to-local-storage data flow, focused manifest permissions, source link, and HTML/CSS installation walkthrough.
 
 ## Chosen direction
 
 - Instrument Panel / Confidence Layer, code-first.
-- Memorable moment: the first viewport presents remaining credits as an instrument reading inside the Lovable workspace, immediately connected to a plain-language trust rail.
+- Memorable moment: the first viewport presents the real Credit Monitor runtime as an instrument reading inside a fictional Lovable workspace, immediately connected to a plain-language trust rail.
 - Visual grammar: credit rings, measurement ticks, tabular telemetry, evidence rails, precise dark surfaces, cyan for active data/actions, green for confirmation only.
 - Seed key: `690409fa`; the user's pinned direction overrides the assigned concept.
 
@@ -32,7 +32,7 @@ related_targets: ["docs/styles.css","docs/demo.js"]
 - Landing copy remains entirely in English.
 - No testimonials, compatibility benchmarks, browser-store availability, or unsupported behavior may be invented.
 - Installation proof is illustrative HTML/CSS, not a claim that screenshots are real.
-- Demo values remain explicitly fictional.
+- Demo values remain explicitly fictional, in-memory, and disconnected from Lovable; the interface and mirrored runtime remain real.
 - Keyboard access, WCAG AA contrast, reduced motion, mobile touch targets, and static-host compatibility are required.
 
 ## Unresolved decisions

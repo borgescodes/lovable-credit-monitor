@@ -87,8 +87,9 @@ Cyan is reserved for active telemetry and the primary path forward; green confir
 - Near-black instrument surfaces with fine blue-gray evidence lines.
 - Cyan active readings and actions; green only for confirmation or healthy status.
 - Variable sans headlines paired with tabular monospace labels and values.
-- Browser and workspace simulations treated as structured proof, not decoration.
+- A real mirrored Credit Monitor runtime framed by a clearly fictional workspace; the product interface is proof, not a landing-page reimplementation.
 - Dense desktop evidence rails that stack cleanly into an explicit mobile sequence.
+- Supplied brand geometry and compact filled Boxicons instead of improvised outline glyphs.
 
 ## Colors
 
@@ -145,7 +146,7 @@ The palette is a cool, low-luminance measurement field: tonal surfaces establish
 
 ## Layout
 
-The desktop canvas is capped at 1180px and generally uses `calc(100% - 40px)` side gutters. The hero is a two-column composition with a `.92fr / 1.08fr` copy-to-instrument ratio, followed by a four-part trust rail; major sections use 126px top spacing and pair a large promise with concise proof.
+The desktop canvas is capped at 1180px and generally uses `calc(100% - 40px)` side gutters. The hero is a two-column composition with a `.92fr / 1.08fr` copy-to-instrument ratio, followed by a four-part trust rail; major sections use 126px top spacing and pair a large promise with concise proof. Its runtime frame is a pointer-inert presentation surface, while the later demo frame remains fully interactive. Both load the same `docs/demo/` document, so scale and framing may change without creating a second product implementation.
 
 Information is organized in equal evidence strips—three-column mechanism, capability, and installation sequences—with 1px dividers carrying most separation. At 980px, the hero and primary content grids become single-column and the trust rail becomes two columns. At 700px, gutters reduce to 28px, evidence strips become a vertical sequence, the workspace sidebar disappears, and controls wrap. At 430px, control choices become two-column grids and the monitor scales from its top-right anchor.
 
@@ -154,6 +155,8 @@ Information is organized in equal evidence strips—three-column mechanism, capa
 ## Elevation & Depth
 
 Depth is structural and restrained. The page uses tonal layering first—page, raised page, panel, and raised panel—then applies deep soft black shadows to browser windows, the workspace shell, permissions proof, and the floating monitor. Cyan glows are small, state-bound signal halos rather than ambient decoration.
+
+Motion follows the same discipline: landing reveals, fine-pointer hero perspective, and smooth anchor movement clarify entry or location without animating product state. Continuous landing motion is confined to telemetry/orbit accents and transform/opacity work. When reduced motion is requested, the landing skips enhancement setup, exposes reveal content immediately, removes parallax and decorative animation, and leaves the mirrored runtime's own reduced-motion rules in control of its interface.
 
 ### Shadow Vocabulary
 
@@ -165,6 +168,8 @@ Depth is structural and restrained. The page uses tonal layering first—page, r
 ### Named Rules
 
 **The Contained Glow Rule.** Glows belong to the active control or telemetry marker they explain. Do not wash entire backgrounds or neutral cards in cyan.
+
+**The Ownership-Bound Motion Rule.** The landing may move its own framing and decoration, but it never reaches into the iframe or animates Credit Monitor state. Reduced motion disables nonessential movement at both the landing and runtime boundaries.
 
 ## Shapes
 
@@ -193,15 +198,15 @@ Panel navy containers are framed by evidence lines and rounded at 16px or 24px d
 
 ### Navigation
 
-The header is a compact horizontal instrument rail: brand lockup at left, muted text links and a source action at right. Links brighten on hover; on small screens, secondary links and the source action recede while the Install link remains available.
+The header is a compact horizontal instrument rail: brand lockup at left, muted text links and a source action at right. The hero label uses the supplied Lovable mark; the source action preserves the supplied GitHub viewBox/path geometry with a pure-white visible fill in every interaction state. Links brighten on hover; on small screens, secondary links and the source action recede while the Install link remains available.
 
 ### Credit Monitor Widget
 
-The signature component is a dark floating meter with a three-dot grip, compact product header, tabular balance, gradient progress, and a status card. It has four observed forms—Full, Compact, Minimal, and Ring—each preserving the same active-accent and confirmation grammar. The widget’s themes change its own product tokens while retaining the broader landing-page instrument system.
+The signature component is the canonical Credit Monitor runtime, mirrored byte-for-byte from `src/` into `docs/demo/runtime/` and hosted inside a simulated in-memory Chrome environment. It is a dark floating meter with a three-dot grip, compact product header, tabular balance, gradient progress, and a status card. Its four real forms—Full, Compact, Minimal, and Ring—preserve the same active-accent and confirmation grammar. The runtime owns monitor markup, state, controls, transitions, and theme tokens; the landing owns only the iframe frame and surrounding proof.
 
 ### Evidence Rails
 
-Trust facts, data-path proof, capability evidence, and installation steps share a divided-rail construction. They use order labels, concise headings, and fine boundaries; the installation sequence includes illustrative browser and file-system primitives, never simulated product screenshots presented as documentary evidence.
+Trust facts, data-path proof, capability evidence, and installation steps share a divided-rail construction. They use order labels, concise headings, fine boundaries, and filled Boxicon geometry whose solid silhouettes remain legible at compact sizes. The installation sequence includes illustrative browser and file-system primitives, never simulated product screenshots presented as documentary evidence.
 
 ## Do's and Don'ts
 
@@ -211,6 +216,8 @@ Trust facts, data-path proof, capability evidence, and installation steps share 
 - **Do** reserve cyan for active telemetry, focus, progress, selection, and the primary action; reserve green for a confirmed healthy result.
 - **Do** pair large balanced sans headlines with monospace labels, code, URLs, versions, and tabular values.
 - **Do** present product proof as bounded, ordered evidence rails or browser/workspace instruments.
+- **Do** frame the mirrored runtime as an inert hero presentation and a separate operable demo without crossing the iframe boundary.
+- **Do** preserve the supplied Lovable geometry, supplied GitHub geometry with pure-white fill, and filled Boxicon treatment.
 - **Do** preserve 44px minimum interactive targets and the observed reduced-motion behavior.
 
 ### Don't:
@@ -219,4 +226,5 @@ Trust facts, data-path proof, capability evidence, and installation steps share 
 - **Don't** add broad ambient glows, frosted-glass effects, or decorative gradients that compete with telemetry.
 - **Don't** use green for calls to action or treat status confirmation as a general accent.
 - **Don't** replace the evidence rails with testimonial cards, browser-store badges, or unverified social proof.
+- **Don't** recreate Credit Monitor markup, controls, state, or motion in landing-page code.
 - **Don't** present fictional demo data or HTML/CSS walkthrough illustrations as live product or browser screenshots.

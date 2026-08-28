@@ -10,6 +10,7 @@ import sys
 import zipfile
 from pathlib import Path
 from urllib.parse import urlparse
+from xml.etree import ElementTree
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -19,9 +20,30 @@ from scripts.sync_demo_runtime import DESTINATION_ROOT, RUNTIME_FILES, SOURCE_RO
 
 DOCS = ROOT / "docs"
 DOWNLOAD_NAME = "lovable-credit-monitor-v0.7.2.zip"
-DOWNLOAD = DOCS / "downloads" / DOWNLOAD_NAME
 EXPECTED_VERSION = "0.7.2"
 RUNTIME_ROOTS = (ROOT / "manifest.json", ROOT / "src", ROOT / "assets")
+REQUIRED_DOWNLOAD_FILES = frozenset(
+    {
+        "manifest.json",
+        "EXTENSION_README.md",
+        "src/background.js",
+        "src/brand.js",
+        "src/collector.js",
+        "src/content.js",
+        "src/icons.js",
+        "src/panel.css",
+        "src/state.js",
+        "src/sync.js",
+        "assets/credit-monitor-default.svg",
+        "assets/icon-16.png",
+        "assets/icon-32.png",
+        "assets/icon-48.png",
+        "assets/icon-128.png",
+    }
+)
+APPROVED_LOVABLE_GEOMETRY_PAINT_SHA256 = "8a4741badb4ebbb904e2aaf34cdd092901f879d3f673c51a00337e2d745cea4a"
+APPROVED_GITHUB_VIEWBOX = "0 0 1024 1024"
+APPROVED_GITHUB_PATH_SHA256 = "11480cefca27efc0ef8dbe70b0e7e6ab2c91ccd67dc2a04af4a0e2ea5c1ea11e"
 
 
 def ok(message: str) -> None:
@@ -87,15 +109,21 @@ def verify_source_hashes() -> None:
 
 
 def verify_download_zip() -> None:
-    if not DOWNLOAD.exists():
+    download_dir = DOCS / "downloads"
+    download = download_dir / DOWNLOAD_NAME
+    if not download.exists():
         fail(f"download package missing: docs/downloads/{DOWNLOAD_NAME}")
+    zip_names = sorted(path.name for path in download_dir.glob("*.zip"))
+    if zip_names != [DOWNLOAD_NAME]:
+        fail(f"distribution ZIP name changed; expected only {DOWNLOAD_NAME}, found {zip_names}")
 
-    with zipfile.ZipFile(DOWNLOAD) as archive:
+    with zipfile.ZipFile(download) as archive:
         names = [name for name in archive.namelist() if not name.endswith("/")]
         if not names:
             fail("download package is empty")
-        if "manifest.json" not in names:
-            fail("download package does not contain manifest.json at root")
+        missing = sorted(REQUIRED_DOWNLOAD_FILES - set(names))
+        if missing:
+            fail("download package is missing required files: " + ", ".join(missing))
         for name in names:
             allowed = (
                 name == "manifest.json"
@@ -113,55 +141,121 @@ def verify_download_zip() -> None:
 
 
 def verify_demo_references() -> None:
-    html_path = DOCS / "index.html"
-    html = html_path.read_text(encoding="utf-8")
-    if DOWNLOAD_NAME not in html:
+    landing_path = DOCS / "index.html"
+    landing_html = landing_path.read_text(encoding="utf-8")
+    if DOWNLOAD_NAME not in landing_html:
         fail("demo does not reference the exact distribution filename")
 
     attr_pattern = re.compile(r'''(?:src|href)=["']([^"']+)["']''', re.IGNORECASE)
     missing = []
-    for raw in attr_pattern.findall(html):
-        parsed = urlparse(raw)
-        if parsed.scheme or raw.startswith(("#", "mailto:", "tel:")):
+    pending = [landing_path, DOCS / "demo" / "index.html"]
+    inspected: set[Path] = set()
+    while pending:
+        html_path = pending.pop(0).resolve()
+        if html_path in inspected:
             continue
-        rel = parsed.path
-        if not rel:
-            continue
-        target = (DOCS / rel).resolve()
-        try:
-            target.relative_to(DOCS.resolve())
-        except ValueError:
-            fail(f"demo reference escapes docs/: {raw}")
-        if not target.exists():
-            missing.append(raw)
+        inspected.add(html_path)
+        owner = html_path.relative_to(DOCS.resolve()).as_posix()
+        html = html_path.read_text(encoding="utf-8")
+        for raw in attr_pattern.findall(html):
+            parsed = urlparse(raw)
+            if parsed.scheme or parsed.netloc or raw.startswith(("#", "mailto:", "tel:")):
+                continue
+            rel = parsed.path
+            if not rel:
+                continue
+            target = (html_path.parent / rel).resolve()
+            try:
+                target.relative_to(DOCS.resolve())
+            except ValueError:
+                fail(f"demo reference escapes docs/: {owner} -> {raw}")
+            if not target.exists():
+                missing.append(f"{owner} references {raw}")
+            elif target.suffix.lower() in {".html", ".htm"}:
+                pending.append(target)
     if missing:
         fail(f"missing local demo references: {', '.join(sorted(set(missing)))}")
-    ok("GitHub Pages local asset and download references")
+    ok(f"GitHub Pages references resolve across {len(inspected)} HTML documents")
 
 
 def verify_demo_is_static() -> None:
-    js = (DOCS / "demo.js").read_text(encoding="utf-8")
-    html = (DOCS / "index.html").read_text(encoding="utf-8")
-    forbidden_js = {
-        "fetch(": "network fetch",
-        "XMLHttpRequest": "XHR",
-        "chrome.": "Chrome extension API",
-        "navigator.sendBeacon": "beacon telemetry",
+    javascript = {
+        "demo.js": (DOCS / "demo.js").read_text(encoding="utf-8"),
+        "demo/demo-adapter.js": (DOCS / "demo" / "demo-adapter.js").read_text(encoding="utf-8"),
     }
-    for token, label in forbidden_js.items():
-        if token in js:
-            fail(f"demo.js contains forbidden {label}: {token}")
-    if re.search(r"<script[^>]+src=[\"']https?://", html, re.IGNORECASE):
-        fail("demo contains a remote runtime script")
-    if re.search(r"<(?:link|img)[^>]+(?:href|src)=[\"']https?://", html, re.IGNORECASE):
-        fail("demo contains a remote runtime asset")
+    html_documents = {
+        "index.html": (DOCS / "index.html").read_text(encoding="utf-8"),
+        "demo/index.html": (DOCS / "demo" / "index.html").read_text(encoding="utf-8"),
+    }
+    network_call_patterns = (
+        (re.compile(r"\bfetch\s*\("), "fetch"),
+        (re.compile(r"\bXMLHttpRequest\b"), "XMLHttpRequest"),
+        (re.compile(r"\bWebSocket\b"), "WebSocket"),
+        (re.compile(r"\bsendBeacon\b"), "sendBeacon"),
+    )
+    remote_url_pattern = re.compile(r"(?:https?|wss?)://", re.IGNORECASE)
+    for name, source in javascript.items():
+        for pattern, label in network_call_patterns:
+            if pattern.search(source):
+                fail(f"{name} contains forbidden {label}")
+        if remote_url_pattern.search(source):
+            fail(f"{name} contains forbidden remote URL")
+    if "chrome." in javascript["demo.js"]:
+        fail("demo.js contains forbidden Chrome extension API: chrome.")
+    for name, html in html_documents.items():
+        for pattern, label in network_call_patterns:
+            if pattern.search(html):
+                fail(f"{name} contains forbidden {label}")
+        if re.search(r"<script[^>]+src=[\"'](?:https?:)?//", html, re.IGNORECASE):
+            fail(f"{name} contains a remote runtime script")
+        if re.search(
+            r"<(?:link|img|iframe|audio|video|source)[^>]+(?:href|src)=[\"'](?:https?:)?//",
+            html,
+            re.IGNORECASE,
+        ):
+            fail(f"{name} contains a remote runtime asset")
     tracking_markers = re.compile(
         r"gtag\(|googletagmanager|segment\.com|mixpanel|plausible\.io|analytics\.js",
         re.IGNORECASE,
     )
-    if tracking_markers.search(html + "\n" + js):
+    all_static_source = "\n".join((*html_documents.values(), *javascript.values()))
+    if tracking_markers.search(all_static_source):
         fail("demo contains an analytics or tracking integration")
-    ok("Demo is dependency-free and has no network or extension API calls")
+    ok("Landing and iframe demo have no network, analytics, or extension-runtime escape")
+
+
+def _local_name(name: str) -> str:
+    return name.rsplit("}", 1)[-1]
+
+
+def _svg_geometry_paint_digest(path: Path) -> str:
+    root = ElementTree.fromstring(path.read_text(encoding="utf-8"))
+    semantic_nodes = []
+    for element in root.iter():
+        attributes = sorted((_local_name(name), value) for name, value in element.attrib.items())
+        semantic_nodes.append((_local_name(element.tag), attributes))
+    payload = json.dumps(semantic_nodes, separators=(",", ":")).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
+def verify_brand_assets() -> None:
+    lovable = DOCS / "assets" / "lovable.svg"
+    if _svg_geometry_paint_digest(lovable) != APPROVED_LOVABLE_GEOMETRY_PAINT_SHA256:
+        fail("Lovable supplied SVG geometry/paint does not match the approved digest")
+
+    github = ElementTree.fromstring((DOCS / "assets" / "github.svg").read_text(encoding="utf-8"))
+    if github.get("viewBox") != APPROVED_GITHUB_VIEWBOX:
+        fail("GitHub SVG viewBox geometry changed")
+    paths = [element for element in github.iter() if _local_name(element.tag) == "path"]
+    if len(paths) != 1:
+        fail("GitHub SVG must contain exactly one visible path")
+    visible_path = paths[0]
+    path_digest = hashlib.sha256((visible_path.get("d") or "").encode("utf-8")).hexdigest()
+    if path_digest != APPROVED_GITHUB_PATH_SHA256:
+        fail("GitHub visible path geometry changed")
+    if (visible_path.get("fill") or "").upper() != "#FFFFFF":
+        fail("GitHub visible path fill must remain pure white (#FFFFFF)")
+    ok("Supplied Lovable and white GitHub brand geometry/paint")
 
 
 def verify_demo_runtime() -> None:
@@ -230,6 +324,7 @@ def main() -> int:
         verify_download_zip,
         verify_demo_references,
         verify_demo_is_static,
+        verify_brand_assets,
         verify_demo_runtime,
         verify_no_obvious_secrets,
         verify_readme_contract,
@@ -237,7 +332,14 @@ def main() -> int:
     try:
         for check in checks:
             check()
-    except (AssertionError, OSError, ValueError, json.JSONDecodeError, zipfile.BadZipFile) as exc:
+    except (
+        AssertionError,
+        OSError,
+        ValueError,
+        json.JSONDecodeError,
+        zipfile.BadZipFile,
+        ElementTree.ParseError,
+    ) as exc:
         print(f"[FAIL] {exc}", file=sys.stderr)
         return 1
     print(f"\nRepository verification passed: {len(checks)}/{len(checks)} checks.")
