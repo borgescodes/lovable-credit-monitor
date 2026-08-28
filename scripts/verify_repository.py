@@ -8,6 +8,7 @@ import json
 import re
 import sys
 import zipfile
+from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import urlparse
 from xml.etree import ElementTree
@@ -42,8 +43,44 @@ REQUIRED_DOWNLOAD_FILES = frozenset(
     }
 )
 APPROVED_LOVABLE_GEOMETRY_PAINT_SHA256 = "8a4741badb4ebbb904e2aaf34cdd092901f879d3f673c51a00337e2d745cea4a"
+APPROVED_GITHUB_GEOMETRY_PAINT_SHA256 = "2b46384dd564b62292bf84afc7f6b684cff3dc55ab61d1ff5d3f9e9ebcdbc912"
 APPROVED_GITHUB_VIEWBOX = "0 0 1024 1024"
 APPROVED_GITHUB_PATH_SHA256 = "11480cefca27efc0ef8dbe70b0e7e6ab2c91ccd67dc2a04af4a0e2ea5c1ea11e"
+REMOTE_DEPENDENCY_ATTRIBUTES = {
+    "audio": "src",
+    "iframe": "src",
+    "img": "src",
+    "link": "href",
+    "script": "src",
+    "source": "src",
+    "video": "src",
+}
+
+
+class DocumentAttributeParser(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.references: list[str] = []
+        self.dependencies: list[tuple[str, str]] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        normalized = {name.lower(): value for name, value in attrs if value is not None}
+        for name in ("src", "href"):
+            if name in normalized:
+                self.references.append(normalized[name])
+        dependency_attribute = REMOTE_DEPENDENCY_ATTRIBUTES.get(tag.lower())
+        if dependency_attribute and dependency_attribute in normalized:
+            self.dependencies.append((tag.lower(), normalized[dependency_attribute]))
+
+    def handle_startendtag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        self.handle_starttag(tag, attrs)
+
+
+def parse_document_attributes(html: str) -> DocumentAttributeParser:
+    parser = DocumentAttributeParser()
+    parser.feed(html)
+    parser.close()
+    return parser
 
 
 def ok(message: str) -> None:
@@ -146,7 +183,6 @@ def verify_demo_references() -> None:
     if DOWNLOAD_NAME not in landing_html:
         fail("demo does not reference the exact distribution filename")
 
-    attr_pattern = re.compile(r'''(?:src|href)=["']([^"']+)["']''', re.IGNORECASE)
     missing = []
     pending = [landing_path, DOCS / "demo" / "index.html"]
     inspected: set[Path] = set()
@@ -157,7 +193,7 @@ def verify_demo_references() -> None:
         inspected.add(html_path)
         owner = html_path.relative_to(DOCS.resolve()).as_posix()
         html = html_path.read_text(encoding="utf-8")
-        for raw in attr_pattern.findall(html):
+        for raw in parse_document_attributes(html).references:
             parsed = urlparse(raw)
             if parsed.scheme or parsed.netloc or raw.startswith(("#", "mailto:", "tel:")):
                 continue
@@ -193,7 +229,10 @@ def verify_demo_is_static() -> None:
         (re.compile(r"\bWebSocket\b"), "WebSocket"),
         (re.compile(r"\bsendBeacon\b"), "sendBeacon"),
     )
-    remote_url_pattern = re.compile(r"(?:https?|wss?)://", re.IGNORECASE)
+    remote_url_pattern = re.compile(
+        r"(?:https?|wss?)://|(?<![:/])//(?:[a-z0-9-]+\.)+[a-z]{2,}(?:[/:?#]|$)",
+        re.IGNORECASE,
+    )
     for name, source in javascript.items():
         for pattern, label in network_call_patterns:
             if pattern.search(source):
@@ -206,14 +245,11 @@ def verify_demo_is_static() -> None:
         for pattern, label in network_call_patterns:
             if pattern.search(html):
                 fail(f"{name} contains forbidden {label}")
-        if re.search(r"<script[^>]+src=[\"'](?:https?:)?//", html, re.IGNORECASE):
-            fail(f"{name} contains a remote runtime script")
-        if re.search(
-            r"<(?:link|img|iframe|audio|video|source)[^>]+(?:href|src)=[\"'](?:https?:)?//",
-            html,
-            re.IGNORECASE,
-        ):
-            fail(f"{name} contains a remote runtime asset")
+        for tag, raw in parse_document_attributes(html).dependencies:
+            parsed = urlparse(raw)
+            if parsed.scheme.lower() in {"http", "https"} or parsed.netloc:
+                dependency_kind = "script" if tag == "script" else "asset"
+                fail(f"{name} contains a remote runtime {dependency_kind}")
     tracking_markers = re.compile(
         r"gtag\(|googletagmanager|segment\.com|mixpanel|plausible\.io|analytics\.js",
         re.IGNORECASE,
@@ -243,7 +279,8 @@ def verify_brand_assets() -> None:
     if _svg_geometry_paint_digest(lovable) != APPROVED_LOVABLE_GEOMETRY_PAINT_SHA256:
         fail("Lovable supplied SVG geometry/paint does not match the approved digest")
 
-    github = ElementTree.fromstring((DOCS / "assets" / "github.svg").read_text(encoding="utf-8"))
+    github_path = DOCS / "assets" / "github.svg"
+    github = ElementTree.fromstring(github_path.read_text(encoding="utf-8"))
     if github.get("viewBox") != APPROVED_GITHUB_VIEWBOX:
         fail("GitHub SVG viewBox geometry changed")
     paths = [element for element in github.iter() if _local_name(element.tag) == "path"]
@@ -255,6 +292,8 @@ def verify_brand_assets() -> None:
         fail("GitHub visible path geometry changed")
     if (visible_path.get("fill") or "").upper() != "#FFFFFF":
         fail("GitHub visible path fill must remain pure white (#FFFFFF)")
+    if _svg_geometry_paint_digest(github_path) != APPROVED_GITHUB_GEOMETRY_PAINT_SHA256:
+        fail("GitHub supplied SVG geometry/paint does not match the approved digest")
     ok("Supplied Lovable and white GitHub brand geometry/paint")
 
 

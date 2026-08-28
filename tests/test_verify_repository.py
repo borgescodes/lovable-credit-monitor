@@ -16,6 +16,7 @@ spec.loader.exec_module(verify_repository)
 
 DOWNLOAD_NAME = "lovable-credit-monitor-v0.7.2.zip"
 APPROVED_LOVABLE_GEOMETRY_PAINT_SHA256 = "8a4741badb4ebbb904e2aaf34cdd092901f879d3f673c51a00337e2d745cea4a"
+APPROVED_GITHUB_GEOMETRY_PAINT_SHA256 = "2b46384dd564b62292bf84afc7f6b684cff3dc55ab61d1ff5d3f9e9ebcdbc912"
 REQUIRED_ZIP_FILES = (
     "manifest.json",
     "EXTENSION_README.md",
@@ -84,11 +85,32 @@ class DemoStaticVerificationTests(unittest.TestCase):
                 with self.assertRaisesRegex(AssertionError, "reference escapes docs/"):
                     verify_repository.verify_demo_references()
 
+    def test_unquoted_iframe_reference_cannot_escape_docs(self):
+        with tempfile.TemporaryDirectory() as directory:
+            docs = self.make_docs(Path(directory))
+            (docs / "index.html").write_text(
+                f'<iframe src=../outside.html></iframe><a href="downloads/{DOWNLOAD_NAME}">Download</a>',
+                encoding="utf-8",
+            )
+            with patch.object(verify_repository, "DOCS", docs):
+                with self.assertRaisesRegex(AssertionError, "reference escapes docs/"):
+                    verify_repository.verify_demo_references()
+
     def test_nested_demo_reference_must_exist_relative_to_demo_document(self):
         with tempfile.TemporaryDirectory() as directory:
             docs = self.make_docs(Path(directory))
             (docs / "demo" / "index.html").write_text(
                 '<script src="runtime/missing.js"></script>', encoding="utf-8"
+            )
+            with patch.object(verify_repository, "DOCS", docs):
+                with self.assertRaisesRegex(AssertionError, "demo/index.html.*runtime/missing.js"):
+                    verify_repository.verify_demo_references()
+
+    def test_unquoted_nested_demo_reference_must_exist(self):
+        with tempfile.TemporaryDirectory() as directory:
+            docs = self.make_docs(Path(directory))
+            (docs / "demo" / "index.html").write_text(
+                "<script src=runtime/missing.js></script>", encoding="utf-8"
             )
             with patch.object(verify_repository, "DOCS", docs):
                 with self.assertRaisesRegex(AssertionError, "demo/index.html.*runtime/missing.js"):
@@ -113,11 +135,31 @@ class DemoStaticVerificationTests(unittest.TestCase):
                     with self.assertRaisesRegex(AssertionError, label):
                         verify_repository.verify_demo_is_static()
 
+    def test_demo_adapter_cannot_gain_protocol_relative_url(self):
+        with tempfile.TemporaryDirectory() as directory:
+            docs = self.make_docs(Path(directory))
+            (docs / "demo" / "demo-adapter.js").write_text(
+                "const endpoint = '//example.com/usage'", encoding="utf-8"
+            )
+            with patch.object(verify_repository, "DOCS", docs):
+                with self.assertRaisesRegex(AssertionError, "remote URL"):
+                    verify_repository.verify_demo_is_static()
+
     def test_iframe_html_cannot_gain_remote_runtime_dependency(self):
         with tempfile.TemporaryDirectory() as directory:
             docs = self.make_docs(Path(directory))
             (docs / "demo" / "index.html").write_text(
                 '<script src="https://example.com/runtime.js"></script>', encoding="utf-8"
+            )
+            with patch.object(verify_repository, "DOCS", docs):
+                with self.assertRaisesRegex(AssertionError, "remote runtime script"):
+                    verify_repository.verify_demo_is_static()
+
+    def test_iframe_html_cannot_gain_unquoted_remote_runtime_dependency(self):
+        with tempfile.TemporaryDirectory() as directory:
+            docs = self.make_docs(Path(directory))
+            (docs / "demo" / "index.html").write_text(
+                "<script src=https://example.com/runtime.js></script>", encoding="utf-8"
             )
             with patch.object(verify_repository, "DOCS", docs):
                 with self.assertRaisesRegex(AssertionError, "remote runtime script"):
@@ -199,6 +241,34 @@ class DemoStaticVerificationTests(unittest.TestCase):
             with patch.object(verify_repository, "DOCS", docs):
                 with self.assertRaisesRegex(AssertionError, "GitHub.*#FFFFFF"):
                     verify_repository.verify_brand_assets()
+
+    def test_github_geometry_paint_rejects_hidden_or_extra_drawables(self):
+        mutations = {
+            "hidden path": ('<path fill="#FFFFFF"', '<path transform="scale(0)" fill="#FFFFFF"'),
+            "extra drawable": ("</svg>", '<circle cx="512" cy="512" r="10" fill="#FFFFFF"></circle></svg>'),
+        }
+        for label, (old, new) in mutations.items():
+            with self.subTest(label=label), tempfile.TemporaryDirectory() as directory:
+                docs = self.make_docs(Path(directory))
+                for name in ("lovable.svg", "github.svg"):
+                    source = (SCRIPT.parents[1] / "docs" / "assets" / name).read_text(encoding="utf-8")
+                    if name == "github.svg":
+                        source = source.replace(old, new, 1)
+                    (docs / "assets" / name).write_text(source, encoding="utf-8")
+                with patch.object(verify_repository, "DOCS", docs):
+                    with self.assertRaisesRegex(AssertionError, "GitHub.*geometry/paint"):
+                        verify_repository.verify_brand_assets()
+
+    def test_supplied_github_asset_matches_complete_fixture_digest(self):
+        github = SCRIPT.parents[1] / "docs" / "assets" / "github.svg"
+        self.assertEqual(
+            verify_repository._svg_geometry_paint_digest(github),
+            APPROVED_GITHUB_GEOMETRY_PAINT_SHA256,
+        )
+        self.assertEqual(
+            getattr(verify_repository, "APPROVED_GITHUB_GEOMETRY_PAINT_SHA256", None),
+            APPROVED_GITHUB_GEOMETRY_PAINT_SHA256,
+        )
 
     def test_download_zip_keeps_exact_public_name(self):
         with tempfile.TemporaryDirectory() as directory:
