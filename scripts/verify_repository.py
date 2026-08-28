@@ -62,9 +62,19 @@ class DocumentAttributeParser(HTMLParser):
         super().__init__(convert_charrefs=True)
         self.references: list[str] = []
         self.dependencies: list[tuple[str, str]] = []
+        self.duplicate_reference_attributes: list[str] = []
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
-        normalized = {name.lower(): value for name, value in attrs if value is not None}
+        normalized: dict[str, str] = {}
+        seen_reference_attributes: set[str] = set()
+        for raw_name, value in attrs:
+            name = raw_name.lower()
+            if name in {"src", "href"}:
+                if name in seen_reference_attributes:
+                    self.duplicate_reference_attributes.append(name)
+                seen_reference_attributes.add(name)
+            if value is not None and name not in normalized:
+                normalized[name] = value
         for name in ("src", "href"):
             if name in normalized:
                 self.references.append(normalized[name])
@@ -80,6 +90,9 @@ def parse_document_attributes(html: str) -> DocumentAttributeParser:
     parser = DocumentAttributeParser()
     parser.feed(html)
     parser.close()
+    if parser.duplicate_reference_attributes:
+        duplicates = ", ".join(sorted(set(parser.duplicate_reference_attributes)))
+        fail(f"HTML contains duplicate {duplicates} reference attributes")
     return parser
 
 
@@ -230,7 +243,7 @@ def verify_demo_is_static() -> None:
         (re.compile(r"\bsendBeacon\b"), "sendBeacon"),
     )
     remote_url_pattern = re.compile(
-        r"(?:https?|wss?)://|(?<![:/])//(?:[a-z0-9-]+\.)+[a-z]{2,}(?:[/:?#]|$)",
+        r'''(?:https?|wss?)://|["'`]//(?=[^/\s"'`?#])''',
         re.IGNORECASE,
     )
     for name, source in javascript.items():

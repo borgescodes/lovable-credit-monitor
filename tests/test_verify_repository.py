@@ -145,6 +145,26 @@ class DemoStaticVerificationTests(unittest.TestCase):
                 with self.assertRaisesRegex(AssertionError, "remote URL"):
                     verify_repository.verify_demo_is_static()
 
+    def test_demo_adapter_cannot_gain_protocol_relative_ipv4_url(self):
+        with tempfile.TemporaryDirectory() as directory:
+            docs = self.make_docs(Path(directory))
+            (docs / "demo" / "demo-adapter.js").write_text(
+                "const endpoint = '//192.0.2.1/usage'", encoding="utf-8"
+            )
+            with patch.object(verify_repository, "DOCS", docs):
+                with self.assertRaisesRegex(AssertionError, "remote URL"):
+                    verify_repository.verify_demo_is_static()
+
+    def test_demo_adapter_cannot_gain_protocol_relative_localhost_url(self):
+        with tempfile.TemporaryDirectory() as directory:
+            docs = self.make_docs(Path(directory))
+            (docs / "demo" / "demo-adapter.js").write_text(
+                "const endpoint = '//localhost/usage'", encoding="utf-8"
+            )
+            with patch.object(verify_repository, "DOCS", docs):
+                with self.assertRaisesRegex(AssertionError, "remote URL"):
+                    verify_repository.verify_demo_is_static()
+
     def test_iframe_html_cannot_gain_remote_runtime_dependency(self):
         with tempfile.TemporaryDirectory() as directory:
             docs = self.make_docs(Path(directory))
@@ -163,6 +183,28 @@ class DemoStaticVerificationTests(unittest.TestCase):
             )
             with patch.object(verify_repository, "DOCS", docs):
                 with self.assertRaisesRegex(AssertionError, "remote runtime script"):
+                    verify_repository.verify_demo_is_static()
+
+    def test_iframe_html_rejects_duplicate_src_attributes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            docs = self.make_docs(Path(directory))
+            (docs / "demo" / "index.html").write_text(
+                "<script src=https://example.com/runtime.js src=demo-adapter.js></script>",
+                encoding="utf-8",
+            )
+            with patch.object(verify_repository, "DOCS", docs):
+                with self.assertRaisesRegex(AssertionError, "duplicate src"):
+                    verify_repository.verify_demo_is_static()
+
+    def test_iframe_html_rejects_duplicate_href_attributes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            docs = self.make_docs(Path(directory))
+            (docs / "demo" / "index.html").write_text(
+                "<link rel=stylesheet href=https://example.com/runtime.css href=demo-workspace.css>",
+                encoding="utf-8",
+            )
+            with patch.object(verify_repository, "DOCS", docs):
+                with self.assertRaisesRegex(AssertionError, "duplicate href"):
                     verify_repository.verify_demo_is_static()
 
     def test_iframe_html_cannot_gain_inline_network_call(self):
