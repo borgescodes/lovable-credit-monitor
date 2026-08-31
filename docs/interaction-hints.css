@@ -1,3 +1,17 @@
+.hero-copy {
+  align-self: center;
+}
+
+.install-actions {
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.install-help-link {
+  justify-content: center;
+}
+
 .interactive-hint {
   position: absolute;
   z-index: 3;
@@ -30,6 +44,10 @@
 }
 
 @media (max-width: 430px) {
+  .install-actions {
+    flex-direction: column;
+  }
+
   .interactive-hint {
     top: 8px;
     right: 8px;
