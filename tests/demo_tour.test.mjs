@@ -94,11 +94,12 @@ test('hero tour and interactive visual hint are independent and respect reduced 
 
 test('demo section keeps the standard heading and removes textual interaction instructions', () => {
   const landing = fs.readFileSync(path.join(ROOT, 'docs', 'index.html'), 'utf8');
-  const hintCss = fs.readFileSync(path.join(ROOT, 'docs', 'interaction-hints.css'), 'utf8');
+  const landingCss = fs.readFileSync(path.join(ROOT, 'docs', 'styles.css'), 'utf8');
 
   assert.match(landing, /class="section-heading"[\s\S]*?<h2>Veja funcionando\.<\/h2>/);
   assert.doesNotMatch(landing, /A demo é interativa|Interativo · clique para testar|class="interactive-hint"/);
-  assert.doesNotMatch(hintCss, /\.interactive-hint/);
+  assert.doesNotMatch(landing, /interaction-hints\.css/);
+  assert.match(landingCss, /\.interactive-runtime-shell/);
 });
 
 test('interactive demo turns the workspace into an animated skeleton while keeping the monitor in focus', () => {
