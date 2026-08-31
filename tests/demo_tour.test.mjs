@@ -52,16 +52,25 @@ function runTour({ search = '?surface=interactive', reduced = false } = {}) {
   return { root, body };
 }
 
-test('hero tour uses the real runtime controls and returns to full view', () => {
+test('hero tour uses the real runtime controls, including ring mode, and returns to full view', () => {
   const { root } = runTour({ search: '?surface=hero' });
   const { SELECTORS, TOUR_STEPS } = root.LCMDemoTour;
 
   assert.match(SELECTORS.mode, /Change view/);
   assert.match(SELECTORS.minimal, /lcm-minimal-surface/);
+  assert.match(SELECTORS.ring, /lcm-ring-surface/);
   assert.match(SELECTORS.appearance, /Appearance/);
   assert.deepEqual(
-    Array.from(TOUR_STEPS, (step) => step.target),
-    ['mode', 'mode', 'minimal', 'appearance', 'appearance'],
+    Array.from(TOUR_STEPS, (step) => [step.target, step.action || 'click']),
+    [
+      ['mode', 'click'],
+      ['mode', 'click'],
+      ['minimal', 'dblclick'],
+      ['ring', 'click'],
+      ['minimal', 'click'],
+      ['appearance', 'click'],
+      ['appearance', 'click'],
+    ],
   );
 });
 
@@ -88,6 +97,22 @@ test('landing clearly marks the interactive demo without changing the hero shell
   assert.match(landing, /href="interaction-hints\.css"/);
   assert.match(hintCss, /pointer-events:\s*none/);
   assert.doesNotMatch(hintCss, /hero-runtime-shell/);
+});
+
+test('landing removes redundant copy and keeps four privacy proofs', () => {
+  const landing = fs.readFileSync(path.join(ROOT, 'docs', 'index.html'), 'utf8');
+  const hintCss = fs.readFileSync(path.join(ROOT, 'docs', 'interaction-hints.css'), 'utf8');
+
+  assert.doesNotMatch(landing, /Extensão não oficial/);
+  assert.doesNotMatch(landing, /version-badge/);
+  assert.doesNotMatch(landing, /hero-trust-rail/);
+  assert.doesNotMatch(landing, /A extensão lê seu uso em Settings/);
+  assert.match(landing, /Dados salvos localmente/);
+  assert.equal((landing.match(/class="privacy-list"[\s\S]*?<\/ul>/)?.[0].match(/<li>/g) || []).length, 4);
+  assert.doesNotMatch(landing, /Não apareceu\?/);
+  assert.doesNotMatch(landing, /installation-help/);
+  assert.match(landing, /class="button button-secondary install-help-link" href="https:\/\/github\.com\/borgescodes\/lovable-credit-monitor"/);
+  assert.match(hintCss, /\.hero-copy\s*\{[^}]*align-self:\s*center/s);
 });
 
 test('runtime demo loads the hero tour after the real extension runtime', () => {
