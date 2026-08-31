@@ -49,6 +49,62 @@
   animation: demo-guide-click 340ms cubic-bezier(.2, .8, .2, 1);
 }
 
+body[data-surface="interactive"] .workspace-topbar,
+body[data-surface="interactive"] .workspace-shell,
+body[data-surface="interactive"] .simulation-label {
+  opacity: .32;
+  filter: saturate(.28) grayscale(.34);
+  transition: opacity 260ms ease, filter 260ms ease;
+}
+
+body[data-surface="interactive"] .workspace-brand :is(strong, span),
+body[data-surface="interactive"] .project-nav li,
+body[data-surface="interactive"] .project-files :is(p, li),
+body[data-surface="interactive"] .workspace-user,
+body[data-surface="interactive"] .canvas-toolbar :is(p, h1),
+body[data-surface="interactive"] .viewport-reading,
+body[data-surface="interactive"] .preview-header strong,
+body[data-surface="interactive"] .preview-copy :is(p, h2, span),
+body[data-surface="interactive"] .preview-metrics :is(span, strong),
+body[data-surface="interactive"] .canvas-status span,
+body[data-surface="interactive"] .conversation-panel header :is(p, h2),
+body[data-surface="interactive"] .message :is(p, time),
+body[data-surface="interactive"] .prompt-field span {
+  color: transparent !important;
+  text-shadow: none !important;
+  border-radius: 6px;
+  background-image: linear-gradient(
+    100deg,
+    rgba(155, 178, 197, .08) 20%,
+    rgba(195, 214, 228, .2) 38%,
+    rgba(155, 178, 197, .08) 56%
+  );
+  background-size: 220% 100%;
+  animation: demo-skeleton-shimmer 3.4s linear infinite;
+}
+
+body[data-surface="interactive"] #lcm-panel.demo-interaction-focus::after {
+  content: "";
+  position: absolute;
+  inset: -9px;
+  border: 1px solid rgba(39, 206, 255, .55);
+  border-radius: 20px;
+  opacity: 0;
+  pointer-events: none;
+  animation: demo-interaction-focus 1.55s cubic-bezier(.16, 1, .3, 1);
+}
+
+@keyframes demo-skeleton-shimmer {
+  from { background-position: 140% 0; }
+  to { background-position: -80% 0; }
+}
+
+@keyframes demo-interaction-focus {
+  0% { opacity: 0; transform: scale(.985); }
+  35% { opacity: .9; }
+  100% { opacity: 0; transform: scale(1.025); }
+}
+
 @keyframes demo-guide-click {
   0% { opacity: 0; transform: scale(.45); }
   35% { opacity: 1; }
@@ -60,5 +116,22 @@
     display: none !important;
     animation: none !important;
     transition: none !important;
+  }
+
+  body[data-surface="interactive"] .workspace-brand :is(strong, span),
+  body[data-surface="interactive"] .project-nav li,
+  body[data-surface="interactive"] .project-files :is(p, li),
+  body[data-surface="interactive"] .workspace-user,
+  body[data-surface="interactive"] .canvas-toolbar :is(p, h1),
+  body[data-surface="interactive"] .viewport-reading,
+  body[data-surface="interactive"] .preview-header strong,
+  body[data-surface="interactive"] .preview-copy :is(p, h2, span),
+  body[data-surface="interactive"] .preview-metrics :is(span, strong),
+  body[data-surface="interactive"] .canvas-status span,
+  body[data-surface="interactive"] .conversation-panel header :is(p, h2),
+  body[data-surface="interactive"] .message :is(p, time),
+  body[data-surface="interactive"] .prompt-field span,
+  body[data-surface="interactive"] #lcm-panel.demo-interaction-focus::after {
+    animation: none !important;
   }
 }
