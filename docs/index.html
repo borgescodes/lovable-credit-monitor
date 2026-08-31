@@ -8,6 +8,7 @@
   <title>Credit Monitor · Seus créditos do Lovable sempre à vista</title>
   <link rel="icon" type="image/png" href="assets/icon-128.png" />
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="interaction-hints.css" />
 </head>
 <body>
   <a class="skip-link" href="#main">Ir para o conteúdo</a>
@@ -66,10 +67,11 @@
         <div>
           <h2>Veja funcionando.</h2>
         </div>
-        <p>Teste os controles em um workspace simulado. A demonstração não se conecta ao Lovable.</p>
+        <p>A demo é interativa. Clique na extensão e teste os controles. Os dados são simulados.</p>
       </div>
 
       <div class="interactive-runtime-shell">
+        <span class="interactive-hint" aria-hidden="true">Interativo · clique para testar</span>
         <iframe
           class="interactive-runtime-frame"
           src="demo/index.html?surface=interactive"
