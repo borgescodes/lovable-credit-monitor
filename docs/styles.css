@@ -149,6 +149,8 @@ code, pre, .version-badge, .control-label, .demo-caption, .proof-strip, .hero-tr
 }
 .interactive-runtime-shell { width: 100%; height: clamp(620px, 68vw, 760px); border-radius: var(--radius-md); }
 .interactive-runtime-frame { width: 100%; height: 100%; display: block; border: 0; }
+.interactive-runtime-shell,
+.interactive-runtime-frame { pointer-events: auto; }
 
 .reveal { opacity: 1; transform: none; }
 .reveal.is-pending { opacity: 0; transform: translateY(24px); }
@@ -578,6 +580,15 @@ code, pre, .version-badge, .control-label, .demo-caption, .proof-strip, .hero-tr
   .hero-runtime-shell { height: 372px; }
   .hero-runtime-frame { width: 166.667%; height: 166.667%; transform: scale(.6); }
   .section-heading h2, .privacy-copy h2, .final-cta h2 { font-size: 2.35rem; }
+}
+
+@media (max-width: 340px) {
+  .interactive-runtime-frame {
+    width: calc(100% / .9);
+    height: calc(100% / .9);
+    transform: scale(.9);
+    transform-origin: top left;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

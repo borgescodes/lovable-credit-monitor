@@ -143,6 +143,18 @@ class LandingStructureTests(unittest.TestCase):
         self.assertNotIn("aria-hidden", demo[0][1])
         self.assertNotIn("tabindex", demo[0][1])
         self.assertEqual(demo[0][1].get("title"), "Interactive Credit Monitor demo")
+        demo_shell = self.tags("div", **{"class": "interactive-runtime-shell"})
+        self.assertEqual(len(demo_shell), 1)
+        for attribute in ("inert", "aria-hidden", "tabindex"):
+            self.assertNotIn(attribute, demo_shell[0][1])
+        self.assertEqual(
+            css_property(
+                self.css,
+                ".interactive-runtime-shell,\n.interactive-runtime-frame",
+                "pointer-events",
+            ),
+            "auto",
+        )
 
     def test_landing_does_not_own_product_controls_or_state(self):
         forbidden = (
@@ -189,6 +201,21 @@ class LandingStructureTests(unittest.TestCase):
         self.assertIn("transform: scale(.6667)", phone)
         self.assertIn(".hero-runtime-frame", narrow)
         self.assertIn("transform: scale(.6)", narrow)
+
+    def test_interactive_runtime_preserves_full_workspace_at_320px(self):
+        self.assertIn("@media (max-width: 340px)", self.css)
+        narrowest = self.css.split("@media (max-width: 340px)", 1)[1].split(
+            "@media (prefers-reduced-motion: reduce)", 1
+        )[0]
+        frame = re.search(r"\.interactive-runtime-frame\s*\{([^}]+)\}", narrowest)
+        self.assertIsNotNone(frame)
+        for declaration in (
+            "width: calc(100% / .9)",
+            "height: calc(100% / .9)",
+            "transform: scale(.9)",
+            "transform-origin: top left",
+        ):
+            self.assertIn(declaration, frame.group(1))
 
     def test_github_mark_stays_white_through_source_action_states(self):
         default = css_property(self.css, ".header-source img", "filter")
