@@ -24,7 +24,11 @@
     return candidateSurface === 'hero' && reducedMotion !== true;
   }
 
-  const api = Object.freeze({ SELECTORS, TOUR_STEPS, shouldRun });
+  function shouldRunInteractiveHint(candidateSurface, reducedMotion) {
+    return candidateSurface === 'interactive' && reducedMotion !== true;
+  }
+
+  const api = Object.freeze({ SELECTORS, TOUR_STEPS, shouldRun, shouldRunInteractiveHint });
   root.LCMDemoTour = api;
 
   const documentRef = root.document;
@@ -33,7 +37,7 @@
 
   const reducedMotion = typeof root.matchMedia === 'function'
     && root.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (!shouldRun(surface, reducedMotion)) return;
+  if (!shouldRun(surface, reducedMotion) && !shouldRunInteractiveHint(surface, reducedMotion)) return;
 
   const cursor = documentRef.createElement('span');
   cursor.className = 'demo-guide-cursor';
@@ -43,6 +47,7 @@
 
   let timer = 0;
   let stepIndex = 0;
+  let interactiveHintStopped = false;
 
   function schedule(delay, callback) {
     if (timer) root.clearTimeout(timer);
@@ -70,33 +75,37 @@
     cursor.classList.add('is-visible');
   }
 
-  function activateTarget(element, action = 'click') {
+  function pulseCursor() {
     cursor.classList.add('is-clicking');
+    root.setTimeout(() => cursor.classList.remove('is-clicking'), 340);
+  }
+
+  function activateTarget(element, action = 'click') {
+    pulseCursor();
     if (action === 'dblclick' && typeof root.MouseEvent === 'function') {
       element.dispatchEvent?.(new root.MouseEvent('dblclick', { bubbles: true, cancelable: true }));
     } else {
       element.click?.();
     }
-    root.setTimeout(() => cursor.classList.remove('is-clicking'), 340);
   }
 
-  function runStep() {
+  function runHeroStep() {
     if (documentRef.hidden) {
-      schedule(500, runStep);
+      schedule(500, runHeroStep);
       return;
     }
 
     if (stepIndex >= TOUR_STEPS.length) {
       cursor.classList.remove('is-visible');
       stepIndex = 0;
-      schedule(1800, runStep);
+      schedule(1800, runHeroStep);
       return;
     }
 
     const step = TOUR_STEPS[stepIndex];
     const target = visibleTarget(SELECTORS[step.target]);
     if (!target) {
-      schedule(180, runStep);
+      schedule(180, runHeroStep);
       return;
     }
 
@@ -104,13 +113,56 @@
     schedule(step.moveMs, () => {
       activateTarget(target, step.action);
       stepIndex += 1;
-      schedule(step.pauseMs, runStep);
+      schedule(step.pauseMs, runHeroStep);
+    });
+  }
+
+  function stopInteractiveHint(panel) {
+    interactiveHintStopped = true;
+    if (timer) root.clearTimeout(timer);
+    cursor.classList.remove('is-visible', 'is-clicking');
+    panel?.classList?.remove('demo-interaction-focus');
+  }
+
+  function runInteractiveHint() {
+    if (interactiveHintStopped) return;
+    if (documentRef.hidden) {
+      schedule(500, runInteractiveHint);
+      return;
+    }
+
+    const panel = visibleTarget(SELECTORS.panel);
+    const target = visibleTarget(SELECTORS.mode);
+    if (!panel || !target) {
+      schedule(180, runInteractiveHint);
+      return;
+    }
+
+    if (panel.dataset.demoHintBound !== 'true') {
+      panel.dataset.demoHintBound = 'true';
+      panel.addEventListener?.('pointerdown', () => stopInteractiveHint(panel), { once: true });
+      panel.addEventListener?.('keydown', () => stopInteractiveHint(panel), { once: true });
+    }
+
+    panel.classList.add('demo-interaction-focus');
+    moveCursorTo(target, 760);
+    schedule(760, () => {
+      pulseCursor();
+      root.setTimeout(() => {
+        if (interactiveHintStopped) return;
+        cursor.classList.remove('is-visible');
+        panel.classList.remove('demo-interaction-focus');
+        schedule(5200, runInteractiveHint);
+      }, 520);
     });
   }
 
   documentRef.addEventListener?.('visibilitychange', () => {
-    if (!documentRef.hidden && stepIndex === 0) schedule(500, runStep);
+    if (documentRef.hidden) return;
+    if (shouldRun(surface, reducedMotion) && stepIndex === 0) schedule(500, runHeroStep);
+    if (shouldRunInteractiveHint(surface, reducedMotion) && !interactiveHintStopped) schedule(700, runInteractiveHint);
   });
 
-  schedule(1200, runStep);
+  if (shouldRun(surface, reducedMotion)) schedule(1200, runHeroStep);
+  if (shouldRunInteractiveHint(surface, reducedMotion)) schedule(900, runInteractiveHint);
 })(globalThis);
