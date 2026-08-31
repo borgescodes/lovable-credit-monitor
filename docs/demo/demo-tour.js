@@ -7,12 +7,15 @@
     panel: '#lcm-panel',
     mode: '#lcm-panel button[aria-label="Change view"]',
     minimal: '#lcm-panel .lcm-minimal-surface',
+    ring: '#lcm-panel .lcm-ring-surface',
     appearance: '#lcm-panel button[aria-label="Appearance"]',
   });
   const TOUR_STEPS = Object.freeze([
     Object.freeze({ target: 'mode', moveMs: 720, pauseMs: 850 }),
     Object.freeze({ target: 'mode', moveMs: 620, pauseMs: 900 }),
-    Object.freeze({ target: 'minimal', moveMs: 650, pauseMs: 900 }),
+    Object.freeze({ target: 'minimal', action: 'dblclick', moveMs: 650, pauseMs: 950 }),
+    Object.freeze({ target: 'ring', moveMs: 620, pauseMs: 850 }),
+    Object.freeze({ target: 'minimal', moveMs: 620, pauseMs: 1050 }),
     Object.freeze({ target: 'appearance', moveMs: 700, pauseMs: 1200 }),
     Object.freeze({ target: 'appearance', moveMs: 560, pauseMs: 700 }),
   ]);
@@ -67,9 +70,13 @@
     cursor.classList.add('is-visible');
   }
 
-  function clickTarget(element) {
+  function activateTarget(element, action = 'click') {
     cursor.classList.add('is-clicking');
-    element.click?.();
+    if (action === 'dblclick' && typeof root.MouseEvent === 'function') {
+      element.dispatchEvent?.(new root.MouseEvent('dblclick', { bubbles: true, cancelable: true }));
+    } else {
+      element.click?.();
+    }
     root.setTimeout(() => cursor.classList.remove('is-clicking'), 340);
   }
 
@@ -95,7 +102,7 @@
 
     moveCursorTo(target, step.moveMs);
     schedule(step.moveMs, () => {
-      clickTarget(target);
+      activateTarget(target, step.action);
       stepIndex += 1;
       schedule(step.pauseMs, runStep);
     });
