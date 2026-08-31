@@ -25,6 +25,7 @@ class FakeElement {
   }
   appendChild(child) { this.children.push(child); return child; }
   setAttribute(name, value) { this.attributes.set(name, String(value)); }
+  addEventListener() {}
   getBoundingClientRect() { return { left: 100, top: 100, width: 40, height: 30 }; }
 }
 
@@ -74,48 +75,43 @@ test('hero tour uses the real runtime controls, including ring mode, and returns
   );
 });
 
-test('automatic tour runs only on hero and respects reduced motion', () => {
+test('hero tour and interactive visual hint are independent and respect reduced motion', () => {
   const hero = runTour({ search: '?surface=hero', reduced: false });
   const interactive = runTour({ search: '?surface=interactive', reduced: false });
-  const reduced = runTour({ search: '?surface=hero', reduced: true });
+  const reduced = runTour({ search: '?surface=interactive', reduced: true });
 
   assert.equal(hero.root.LCMDemoTour.shouldRun('hero', false), true);
+  assert.equal(hero.root.LCMDemoTour.shouldRunInteractiveHint('hero', false), false);
   assert.equal(hero.body.children.length, 1);
+
   assert.equal(interactive.root.LCMDemoTour.shouldRun('interactive', false), false);
-  assert.equal(interactive.body.children.length, 0);
-  assert.equal(reduced.root.LCMDemoTour.shouldRun('hero', true), false);
+  assert.equal(interactive.root.LCMDemoTour.shouldRunInteractiveHint('interactive', false), true);
+  assert.equal(interactive.body.children.length, 1);
+
+  assert.equal(reduced.root.LCMDemoTour.shouldRunInteractiveHint('interactive', true), false);
   assert.equal(reduced.body.children.length, 0);
 });
 
-test('landing clearly marks the interactive demo without changing the hero shell behavior', () => {
+test('demo section keeps the standard heading and removes textual interaction instructions', () => {
   const landing = fs.readFileSync(path.join(ROOT, 'docs', 'index.html'), 'utf8');
   const hintCss = fs.readFileSync(path.join(ROOT, 'docs', 'interaction-hints.css'), 'utf8');
 
-  assert.match(landing, /A demo é interativa\. Clique na extensão e teste os controles\. Os dados são simulados\./);
-  assert.match(landing, /class="interactive-hint"/);
-  assert.match(landing, /Interativo · clique para testar/);
-  assert.match(landing, /href="interaction-hints\.css"/);
-  assert.match(hintCss, /pointer-events:\s*none/);
-  assert.doesNotMatch(hintCss, /hero-runtime-shell/);
+  assert.match(landing, /class="section-heading"[\s\S]*?<h2>Veja funcionando\.<\/h2>/);
+  assert.doesNotMatch(landing, /A demo é interativa|Interativo · clique para testar|class="interactive-hint"/);
+  assert.doesNotMatch(hintCss, /\.interactive-hint/);
 });
 
-test('landing removes redundant copy and keeps four privacy proofs', () => {
-  const landing = fs.readFileSync(path.join(ROOT, 'docs', 'index.html'), 'utf8');
-  const hintCss = fs.readFileSync(path.join(ROOT, 'docs', 'interaction-hints.css'), 'utf8');
+test('interactive demo turns the workspace into an animated skeleton while keeping the monitor in focus', () => {
+  const tourCss = fs.readFileSync(path.join(ROOT, 'docs', 'demo', 'demo-tour.css'), 'utf8');
 
-  assert.doesNotMatch(landing, /Extensão não oficial/);
-  assert.doesNotMatch(landing, /version-badge/);
-  assert.doesNotMatch(landing, /hero-trust-rail/);
-  assert.doesNotMatch(landing, /A extensão lê seu uso em Settings/);
-  assert.match(landing, /Dados salvos localmente/);
-  assert.equal((landing.match(/class="privacy-list"[\s\S]*?<\/ul>/)?.[0].match(/<li>/g) || []).length, 4);
-  assert.doesNotMatch(landing, /Não apareceu\?/);
-  assert.doesNotMatch(landing, /installation-help/);
-  assert.match(landing, /class="button button-secondary install-help-link" href="https:\/\/github\.com\/borgescodes\/lovable-credit-monitor"/);
-  assert.match(hintCss, /\.hero-copy\s*\{[^}]*align-self:\s*center/s);
+  assert.match(tourCss, /body\[data-surface="interactive"\][\s\S]*\.workspace-topbar[\s\S]*\.workspace-shell[\s\S]*opacity:/);
+  assert.match(tourCss, /demo-skeleton-shimmer/);
+  assert.match(tourCss, /#lcm-panel\.demo-interaction-focus::after/);
+  assert.doesNotMatch(tourCss, /#lcm-panel\s*\{[^}]*opacity:\s*0\.[0-9]+/s);
+  assert.match(tourCss, /prefers-reduced-motion:\s*reduce/);
 });
 
-test('runtime demo loads the hero tour after the real extension runtime', () => {
+test('runtime demo loads the visual guidance after the real extension runtime', () => {
   const demoHtml = fs.readFileSync(path.join(ROOT, 'docs', 'demo', 'index.html'), 'utf8');
   const tourCss = fs.readFileSync(path.join(ROOT, 'docs', 'demo', 'demo-tour.css'), 'utf8');
 
@@ -124,5 +120,4 @@ test('runtime demo loads the hero tour after the real extension runtime', () => 
   const tourIndex = demoHtml.indexOf('demo-tour.js');
   assert.ok(runtimeIndex >= 0 && tourIndex > runtimeIndex);
   assert.match(tourCss, /demo-guide-cursor/);
-  assert.match(tourCss, /prefers-reduced-motion:\s*reduce/);
 });
