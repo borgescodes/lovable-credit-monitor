@@ -35,7 +35,7 @@ The extension treats Lovable's People screen as the authoritative source, reads 
 - The public demo runs a byte-for-byte mirror of the real Credit Monitor interface/runtime inside a fictional Lovable workspace. A local adapter supplies fictional usage through simulated, in-memory Chrome storage; the demo never connects to Lovable, a project backend, the network, or a visitor's browser-extension APIs.
 - Runtime source, synchronization rules, state semantics, permissions, and extension behavior must remain unchanged unless a presentation defect makes a minimal change necessary.
 - The extension is unofficial and independent, with no affiliation or endorsement claim from Lovable.
-- The public copy remains entirely in English.
+- The public copy remains entirely in Brazilian Portuguese (pt-BR).
 - Installation proof is authored as truthful HTML/CSS illustration; it must not imply browser-store distribution or capabilities the extension does not have.
 
 ## Brand Commitments
